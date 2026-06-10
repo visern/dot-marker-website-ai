@@ -6,7 +6,11 @@
   <title>Dot Marker Books — Activity Books for Kids</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Fonts matched to cover typography:
+       Luckiest Guy  → "DOT MARKERS" chunky outlined display title on all covers
+       Baloo 2       → "ACTIVITY BOOK" / subtitle rounded-bold caps on all covers
+  -->
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
     /* ─── Cover-extracted palette ─────────────────────────────────
        Shark cover   → teal   #26b5af
@@ -41,7 +45,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; font-size: 16px; }
     body {
-      font-family: 'Nunito', sans-serif;
+      font-family: 'Baloo 2', sans-serif;
       background: var(--cream);
       color: var(--navy);
       line-height: 1.7;
@@ -58,7 +62,7 @@
       gap: 8px;
       padding: 0.8rem 1.8rem;
       border-radius: 100px;
-      font-family: 'Nunito', sans-serif;
+      font-family: 'Baloo 2', sans-serif;
       font-size: 0.95rem;
       font-weight: 800;
       cursor: pointer;
@@ -130,8 +134,9 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      font-weight: 800;
+      font-family: 'Luckiest Guy', cursive;
       font-size: 1rem;
+      letter-spacing: 0.04em;
       color: var(--navy);
     }
     .nav-dots { display: flex; gap: 3px; }
@@ -180,11 +185,12 @@
       margin-bottom: 1.5rem;
     }
     .hero-heading {
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(2.8rem, 5vw, 4.5rem);
-      line-height: 1.1;
+      font-family: 'Luckiest Guy', cursive;
+      font-size: clamp(2.6rem, 4.8vw, 4.2rem);
+      line-height: 1.15;
       color: var(--navy);
       margin-bottom: 1.25rem;
+      letter-spacing: 0.02em;   /* matches tight cover title kerning */
     }
     .hero-heading .word-teal { color: var(--teal); }
     .hero-heading .word-lime { color: var(--lime-dark); }
@@ -197,7 +203,7 @@
     }
     .hero-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; }
     .hero-stats { display: flex; gap: 2rem; margin-top: 2.5rem; }
-    .hero-stat-num { font-family: 'Fredoka One', cursive; font-size: 1.8rem; color: var(--navy); line-height: 1; }
+    .hero-stat-num { font-family: 'Luckiest Guy', cursive; font-size: 1.8rem; color: var(--navy); line-height: 1; }
     .hero-stat-label { font-size: 0.78rem; font-weight: 700; color: var(--navy2); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.06em; }
 
     .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; height: 520px; }
@@ -293,7 +299,7 @@
       margin-bottom: 0.6rem;
     }
     .section-tag .dot { width: 7px; height: 7px; }
-    .section-heading { font-family: 'Fredoka One', cursive; font-size: clamp(2rem, 4vw, 2.8rem); color: var(--navy); margin-bottom: 0.75rem; line-height: 1.15; }
+    .section-heading { font-family: 'Luckiest Guy', cursive; font-size: clamp(2rem, 4vw, 2.8rem); color: var(--navy); margin-bottom: 0.75rem; line-height: 1.15; letter-spacing: 0.02em; }
     .section-lead { font-size: 1rem; color: var(--navy2); opacity: 0.75; max-width: 500px; }
 
     /* ─── Books ───────────────────────────────────────────────── */
@@ -329,7 +335,7 @@
     .book-series.s-teal   { color: var(--teal); }
     .book-series.s-lime   { color: var(--lime-dark); }
     .book-series.s-forest { color: var(--forest); }
-    .book-title { font-family: 'Fredoka One', cursive; font-size: 1.15rem; color: var(--navy); line-height: 1.25; }
+    .book-title { font-family: 'Luckiest Guy', cursive; font-size: 1.1rem; color: var(--navy); line-height: 1.25; letter-spacing: 0.02em; }
     .book-desc  { font-size: 0.875rem; color: var(--navy2); opacity: 0.75; flex: 1; }
     .book-cta   { margin-top: 0.75rem; }
     .book-cta a {
@@ -339,7 +345,7 @@
       gap: 8px;
       padding: 0.7rem 1rem;
       border-radius: 10px;
-      font-family: 'Nunito', sans-serif;
+      font-family: 'Baloo 2', sans-serif;
       font-size: 0.875rem;
       font-weight: 800;
       color: #fff;
@@ -414,7 +420,7 @@
 
     .about-text-side { padding: 5rem 4rem; display: flex; flex-direction: column; justify-content: center; gap: 1.25rem; }
     .about-tag { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--yellow); opacity: 0.85; }
-    .about-heading { font-family: 'Fredoka One', cursive; font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.15; color: #fff; }
+    .about-heading { font-family: 'Luckiest Guy', cursive; font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.2; color: #fff; letter-spacing: 0.02em; }
     .about-body { font-size: 1rem; color: rgba(255,255,255,0.72); line-height: 1.75; }
     .about-dots-strip { display: flex; gap: 8px; margin-top: 0.5rem; }
     .about-dots-strip .dot { width: 12px; height: 12px; opacity: 0.7; }
@@ -443,7 +449,7 @@
       padding: 0.8rem 1rem;
       border: 2px solid rgba(38,181,175,0.15);
       border-radius: 10px;
-      font-family: 'Nunito', sans-serif;
+      font-family: 'Baloo 2', sans-serif;
       font-size: 0.95rem;
       color: var(--navy);
       background: var(--cream);
@@ -457,7 +463,7 @@
     /* ─── Footer ──────────────────────────────────────────────── */
     footer { background: var(--navy); padding: 3rem 2rem; }
     .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; text-align: center; }
-    .footer-brand { font-family: 'Fredoka One', cursive; font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 10px; }
+    .footer-brand { font-family: 'Luckiest Guy', cursive; font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 10px; letter-spacing: 0.03em; }
     .footer-brand-dots { display: flex; gap: 5px; }
     .footer-brand-dots .dot { width: 10px; height: 10px; }
     footer p { font-size: 0.85rem; color: rgba(255,255,255,0.4); }
