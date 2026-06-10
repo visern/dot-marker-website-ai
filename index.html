@@ -216,21 +216,44 @@
     }
     .hero-circle .splash { position: absolute; border-radius: 50%; }
 
-    .book-fan { position: relative; z-index: 1; width: 220px; height: 300px; }
+    /* ── Circular orbit ──────────────────────────────────────────
+       Each book starts centered in the container (transform-origin
+       defaults to its own center = the container center), then
+       rotate(a) translateX(r) rotate(-a) traces a circle of radius r
+       while keeping the book upright.
+    ─────────────────────────────────────────────────────────────── */
+    .book-fan {
+      position: relative;
+      z-index: 1;
+      width: 360px;
+      height: 360px;
+    }
     .book-fan .fan-item {
       position: absolute;
-      width: 180px;
+      width: 155px;
+      /* center the book in the container (155px wide, ~207px tall at 3:4) */
+      left: calc(50% - 77px);
+      top:  calc(50% - 103px);
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 8px 32px rgba(13,43,62,0.22), 0 2px 8px rgba(13,43,62,0.1);
-      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+      animation: bookOrbit 9s linear infinite;
+      cursor: pointer;
+    }
+    /* 120° offsets so the three books are evenly spaced */
+    .book-fan .fan-item:nth-child(1) { animation-delay:    0s; }
+    .book-fan .fan-item:nth-child(2) { animation-delay: -3s;   }
+    .book-fan .fan-item:nth-child(3) { animation-delay: -6s;   }
+
+    @keyframes bookOrbit {
+      from { transform: rotate(0deg)   translateX(105px) rotate(0deg); }
+      to   { transform: rotate(360deg) translateX(105px) rotate(-360deg); }
     }
     .book-fan .fan-item img { width: 100%; display: block; }
-    .book-fan .fan-item:nth-child(1) { transform: rotate(-12deg) translate(-70px, 20px); z-index:1; opacity:0.88; }
-    .book-fan .fan-item:nth-child(2) { transform: rotate(0deg)   translate(0, -10px);  z-index:3; }
-    .book-fan .fan-item:nth-child(3) { transform: rotate(12deg)  translate(60px, 20px); z-index:2; opacity:0.88; }
-    .book-fan:hover .fan-item:nth-child(1) { transform: rotate(-18deg) translate(-90px, 25px); }
-    .book-fan:hover .fan-item:nth-child(3) { transform: rotate(18deg)  translate(80px,  25px); }
+
+    /* Pause orbit on hover; slight scale on the hovered book */
+    .book-fan:hover .fan-item { animation-play-state: paused; }
+    .book-fan .fan-item:hover { transform-origin: center; filter: brightness(1.06); box-shadow: 0 16px 48px rgba(13,43,62,0.28); }
 
     .hero-badge {
       position: absolute;
@@ -485,10 +508,12 @@
       .hero-stats { justify-content: center; }
       .hero-visual { height: 340px; }
       .hero-circle { width: 300px; height: 300px; }
-      .book-fan { width: 160px; height: 220px; }
-      .book-fan .fan-item { width: 130px; }
-      .book-fan .fan-item:nth-child(1) { transform: rotate(-12deg) translate(-50px,15px); }
-      .book-fan .fan-item:nth-child(3) { transform: rotate(12deg) translate(45px,15px); }
+      .book-fan { width: 260px; height: 260px; }
+      .book-fan .fan-item { width: 115px; left: calc(50% - 57px); top: calc(50% - 76px); }
+      @keyframes bookOrbit {
+        from { transform: rotate(0deg)   translateX(78px) rotate(0deg); }
+        to   { transform: rotate(360deg) translateX(78px) rotate(-360deg); }
+      }
       .badge-top    { top:10px; right:-10px; }
       .badge-bottom { bottom:20px; left:-10px; }
       .books-grid { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto; }
