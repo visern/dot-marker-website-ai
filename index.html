@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dot Marker Books — Activity Books for Kids</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Cover-extracted palette ─────────────────────────────────
+       Shark cover   → teal   #26b5af
+       Sloth cover   → lime   #7fc55a
+       ABC cover     → green  #4d9c38
+       All covers    → red    #e8273a  yellow #ffd63e
+    ─────────────────────────────────────────────────────────────── */
+    :root {
+      --white:       #ffffff;
+      --cream:       #f0fbfb;
+      --sand:        #daf3f2;
+
+      --navy:        #0d2b3e;
+      --navy2:       #1a4560;
+
+      --teal:        #26b5af;
+      --teal-dark:   #1a8f8a;
+      --lime:        #7fc55a;
+      --lime-dark:   #5a9e3c;
+      --forest:      #4d9c38;
+      --forest-dark: #3a7a2a;
+
+      --red:         #e8273a;
+      --red-dark:    #c01e2e;
+      --yellow:      #ffd63e;
+      --orange:      #f07c1a;
+      --blue:        #2e9ae8;
+      --purple:      #8050c8;
+      --pink:        #e85fa0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--cream);
+      color: var(--navy);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; }
+    .dot { display: inline-block; border-radius: 50%; flex-shrink: 0; }
+
+    /* ─── Buttons ─────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.8rem 1.8rem;
+      border-radius: 100px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+      letter-spacing: 0.01em;
+    }
+    .btn:active { transform: scale(0.96) translateY(1px) !important; }
+
+    .btn-primary {
+      background: var(--teal);
+      color: #fff;
+      box-shadow: 0 4px 0 var(--teal-dark), 0 8px 24px rgba(38,181,175,0.32);
+    }
+    .btn-primary:hover {
+      background: var(--teal-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 var(--teal-dark), 0 12px 28px rgba(38,181,175,0.36);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--navy);
+      border: 2.5px solid var(--navy);
+    }
+    .btn-outline:hover {
+      background: var(--navy);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+    .btn-export {
+      background: var(--yellow);
+      color: var(--navy);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.12), 0 6px 20px rgba(255,214,62,0.4);
+      font-size: 0.875rem;
+    }
+    .btn-export:hover {
+      background: #f5ca2e;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 rgba(0,0,0,0.12), 0 10px 24px rgba(255,214,62,0.45);
+    }
+    .stamp-anim { animation: stamp 0.3s ease; }
+    @keyframes stamp {
+      0%   { transform: scale(1)    translateY(0); }
+      35%  { transform: scale(0.94) translateY(4px); }
+      70%  { transform: scale(1.04) translateY(-2px); }
+      100% { transform: scale(1)    translateY(0); }
+    }
+
+    /* ─── Nav ─────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      width: calc(100% - 2rem);
+      max-width: 900px;
+      background: rgba(240,251,251,0.92);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(38,181,175,0.15);
+      border-radius: 100px;
+      padding: 0.6rem 0.75rem 0.6rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 24px rgba(38,181,175,0.1);
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--navy);
+    }
+    .nav-dots { display: flex; gap: 3px; }
+    .nav-dots .dot { width: 9px; height: 9px; }
+    .nav-links { display: flex; align-items: center; gap: 0.25rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--navy);
+      padding: 0.4rem 0.9rem;
+      border-radius: 100px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a:hover { background: var(--sand); }
+    .nav-links .nav-cta a {
+      background: var(--teal);
+      color: #fff;
+      margin-left: 0.5rem;
+      padding: 0.45rem 1.1rem;
+    }
+    .nav-links .nav-cta a:hover { background: var(--teal-dark); }
+
+    /* ─── Hero ────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 7rem 4rem 5rem;
+      gap: 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--yellow);
+      color: var(--navy);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+    .hero-heading {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      line-height: 1.1;
+      color: var(--navy);
+      margin-bottom: 1.25rem;
+    }
+    .hero-heading .word-teal { color: var(--teal); }
+    .hero-heading .word-lime { color: var(--lime-dark); }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--navy2);
+      margin-bottom: 2rem;
+      max-width: 400px;
+      opacity: 0.85;
+    }
+    .hero-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .hero-stats { display: flex; gap: 2rem; margin-top: 2.5rem; }
+    .hero-stat-num { font-family: 'Fredoka One', cursive; font-size: 1.8rem; color: var(--navy); line-height: 1; }
+    .hero-stat-label { font-size: 0.78rem; font-weight: 700; color: var(--navy2); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; height: 520px; }
+    .hero-circle {
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, rgba(38,181,175,0.18) 0%, rgba(77,156,56,0.12) 100%);
+    }
+    .hero-circle .splash { position: absolute; border-radius: 50%; }
+
+    .book-fan { position: relative; z-index: 1; width: 220px; height: 300px; }
+    .book-fan .fan-item {
+      position: absolute;
+      width: 180px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(13,43,62,0.22), 0 2px 8px rgba(13,43,62,0.1);
+      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+    }
+    .book-fan .fan-item img { width: 100%; display: block; }
+    .book-fan .fan-item:nth-child(1) { transform: rotate(-12deg) translate(-70px, 20px); z-index:1; opacity:0.88; }
+    .book-fan .fan-item:nth-child(2) { transform: rotate(0deg)   translate(0, -10px);  z-index:3; }
+    .book-fan .fan-item:nth-child(3) { transform: rotate(12deg)  translate(60px, 20px); z-index:2; opacity:0.88; }
+    .book-fan:hover .fan-item:nth-child(1) { transform: rotate(-18deg) translate(-90px, 25px); }
+    .book-fan:hover .fan-item:nth-child(3) { transform: rotate(18deg)  translate(80px,  25px); }
+
+    .hero-badge {
+      position: absolute;
+      background: #fff;
+      border-radius: 100px;
+      padding: 0.5rem 1rem;
+      box-shadow: 0 4px 16px rgba(13,43,62,0.12);
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 10;
+      white-space: nowrap;
+    }
+    .badge-top    { top: 30px;   right: 10px; }
+    .badge-bottom { bottom: 50px; left: 0; }
+
+    /* ─── Rainbow dot ticker (exact colors from cover dot rows) ─ */
+    .dot-ticker { width: 100%; overflow: hidden; padding: 10px 0; background: var(--navy); }
+    .dot-ticker-track {
+      display: flex;
+      gap: 10px;
+      animation: dotScroll 12s linear infinite;
+      width: max-content;
+      padding: 0 10px;
+    }
+    @keyframes dotScroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+    .dot-ticker .dot { width: 22px; height: 22px; }
+
+    .label-ticker { width: 100%; background: var(--teal); overflow: hidden; padding: 0.6rem 0; }
+    .label-ticker-track {
+      display: flex;
+      gap: 1.5rem;
+      animation: labelScroll 18s linear infinite;
+      width: max-content;
+    }
+    @keyframes labelScroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+    .label-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.85);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .label-item .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.5); }
+
+    /* ─── Section chrome ──────────────────────────────────────── */
+    .section-wrap { padding: 6rem 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--navy2);
+      opacity: 0.55;
+      margin-bottom: 0.6rem;
+    }
+    .section-tag .dot { width: 7px; height: 7px; }
+    .section-heading { font-family: 'Fredoka One', cursive; font-size: clamp(2rem, 4vw, 2.8rem); color: var(--navy); margin-bottom: 0.75rem; line-height: 1.15; }
+    .section-lead { font-size: 1rem; color: var(--navy2); opacity: 0.75; max-width: 500px; }
+
+    /* ─── Books ───────────────────────────────────────────────── */
+    #books { background: var(--white); }
+    .books-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 3rem; flex-wrap: wrap; gap: 1.5rem; }
+    .books-header-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .books-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
+
+    .book-card {
+      background: var(--cream);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1.5px solid rgba(38,181,175,0.1);
+      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+    .book-card:hover {
+      transform: translateY(-8px) rotate(-1deg);
+      box-shadow: 0 20px 48px rgba(13,43,62,0.12), 0 4px 12px rgba(13,43,62,0.06);
+    }
+    .book-img-wrap { position: relative; overflow: hidden; }
+    .book-img-wrap img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.4s; }
+    .book-card:hover .book-img-wrap img { transform: scale(1.04); }
+
+    .book-chip { position: absolute; top: 10px; left: 10px; color: #fff; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; }
+    .chip-teal   { background: var(--teal); }
+    .chip-lime   { background: var(--lime-dark); }
+    .chip-forest { background: var(--forest); }
+
+    .book-body { padding: 1.25rem 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+    .book-series { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+    .book-series.s-teal   { color: var(--teal); }
+    .book-series.s-lime   { color: var(--lime-dark); }
+    .book-series.s-forest { color: var(--forest); }
+    .book-title { font-family: 'Fredoka One', cursive; font-size: 1.15rem; color: var(--navy); line-height: 1.25; }
+    .book-desc  { font-size: 0.875rem; color: var(--navy2); opacity: 0.75; flex: 1; }
+    .book-cta   { margin-top: 0.75rem; }
+    .book-cta a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0.7rem 1rem;
+      border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 800;
+      color: #fff;
+      transition: filter 0.2s, transform 0.15s;
+    }
+    .book-cta a:hover { filter: brightness(0.88); transform: translateY(-1px); }
+    .cta-teal   { background: var(--teal); }
+    .cta-lime   { background: var(--lime-dark); }
+    .cta-forest { background: var(--forest); }
+
+    /* ─── Export toast ────────────────────────────────────────── */
+    .export-toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--navy);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 999;
+      transition: transform 0.35s cubic-bezier(.34,1.56,.64,1), opacity 0.35s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .export-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .export-toast .dot { width: 8px; height: 8px; background: var(--lime); }
+
+    /* ─── About ───────────────────────────────────────────────── */
+    #about { background: var(--navy); color: #fff; padding: 0; overflow: hidden; }
+    .about-inner { display: grid; grid-template-columns: 1fr 1fr; min-height: 540px; }
+    .about-art {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--forest) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-art::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1.5px, transparent 1.5px);
+      background-size: 26px 26px;
+    }
+    .about-photo-frame {
+      position: relative;
+      z-index: 1;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 5px solid rgba(255,255,255,0.2);
+      box-shadow: 0 0 0 12px rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .about-photo-placeholder { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .about-photo-placeholder .dots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .about-photo-placeholder .dots-grid .dot { width: 26px; height: 26px; }
+    .about-photo-placeholder p { font-size: 0.7rem; color: rgba(255,255,255,0.45); letter-spacing: 0.06em; }
+    .about-art .float-dot { position: absolute; border-radius: 50%; opacity: 0.12; }
+
+    .about-text-side { padding: 5rem 4rem; display: flex; flex-direction: column; justify-content: center; gap: 1.25rem; }
+    .about-tag { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--yellow); opacity: 0.85; }
+    .about-heading { font-family: 'Fredoka One', cursive; font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.15; color: #fff; }
+    .about-body { font-size: 1rem; color: rgba(255,255,255,0.72); line-height: 1.75; }
+    .about-dots-strip { display: flex; gap: 8px; margin-top: 0.5rem; }
+    .about-dots-strip .dot { width: 12px; height: 12px; opacity: 0.7; }
+
+    /* ─── Contact ─────────────────────────────────────────────── */
+    #contact { background: var(--cream); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; align-items: start; }
+    .contact-left .section-heading { margin-bottom: 1rem; }
+    .contact-left p { font-size: 0.975rem; color: var(--navy2); opacity: 0.75; margin-bottom: 1.5rem; }
+    .contact-fun-dots { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
+    .contact-fun-dots .dot { width: 20px; height: 20px; }
+    .contact-form {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 2.5rem;
+      border: 1.5px solid rgba(38,181,175,0.1);
+      box-shadow: 0 4px 24px rgba(38,181,175,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .field-label { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy2); margin-bottom: 0.5rem; }
+    .field-label .dot { width: 6px; height: 6px; }
+    input, textarea {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 2px solid rgba(38,181,175,0.15);
+      border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      color: var(--navy);
+      background: var(--cream);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(38,181,175,0.12); }
+    textarea { resize: vertical; min-height: 110px; }
+    .form-submit { align-self: flex-start; }
+
+    /* ─── Footer ──────────────────────────────────────────────── */
+    footer { background: var(--navy); padding: 3rem 2rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; text-align: center; }
+    .footer-brand { font-family: 'Fredoka One', cursive; font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 10px; }
+    .footer-brand-dots { display: flex; gap: 5px; }
+    .footer-brand-dots .dot { width: 10px; height: 10px; }
+    footer p { font-size: 0.85rem; color: rgba(255,255,255,0.4); }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a { font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.5); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--yellow); }
+
+    /* ─── Reveal ──────────────────────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+
+    /* ─── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; text-align: center; padding: 7rem 2rem 4rem; }
+      .hero-sub { margin: 0 auto 2rem; }
+      .hero-btns { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-visual { height: 340px; }
+      .hero-circle { width: 300px; height: 300px; }
+      .book-fan { width: 160px; height: 220px; }
+      .book-fan .fan-item { width: 130px; }
+      .book-fan .fan-item:nth-child(1) { transform: rotate(-12deg) translate(-50px,15px); }
+      .book-fan .fan-item:nth-child(3) { transform: rotate(12deg) translate(45px,15px); }
+      .badge-top    { top:10px; right:-10px; }
+      .badge-bottom { bottom:20px; left:-10px; }
+      .books-grid { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto; }
+      .books-header { flex-direction: column; align-items: flex-start; }
+      .about-inner { grid-template-columns: 1fr; }
+      .about-text-side { padding: 3rem 2rem; }
+      .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      nav { top:10px; padding: 0.5rem 0.6rem 0.5rem 1rem; }
+      .nav-links li:not(.nav-cta) { display: none; }
+    }
+    @media (max-width: 600px) { .section-wrap { padding: 4rem 1.25rem; } }
+  </style>
+</head>
+<body>
+
+  <!-- Export toast -->
+  <div class="export-toast" id="exportToast">
+    <span class="dot"></span> Book list downloaded!
+  </div>
+
+  <!-- ─── Nav ──────────────────────────────────────────────────── -->
+  <nav>
+    <a href="#hero" class="nav-brand">
+      <div class="nav-dots">
+        <span class="dot" style="background:var(--red)"></span>
+        <span class="dot" style="background:var(--orange)"></span>
+        <span class="dot" style="background:var(--yellow)"></span>
+        <span class="dot" style="background:var(--lime)"></span>
+        <span class="dot" style="background:var(--teal)"></span>
+        <span class="dot" style="background:var(--blue)"></span>
+        <span class="dot" style="background:var(--purple)"></span>
+      </div>
+      Dot Marker Books
+    </a>
+    <ul class="nav-links">
+      <li><a href="#books">Books</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li class="nav-cta"><a href="#books">Shop Now ✦</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── Hero ─────────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-text">
+      <div class="hero-eyebrow">
+        <span class="dot" style="width:8px;height:8px;background:var(--navy)"></span>
+        Activity Books for Kids
+      </div>
+      <h1 class="hero-heading">
+        Big dots.<br>
+        <span class="word-teal">Ocean fun.</span><br>
+        <span class="word-lime">Wild adventures.</span>
+      </h1>
+      <p class="hero-sub">
+        Screen-free dot marker activity books designed for little hands — bold, mess-friendly, and endlessly fun.
+      </p>
+      <div class="hero-btns">
+        <a href="#books" class="btn btn-primary" onclick="doStamp(this)">Shop the Books</a>
+        <a href="#about" class="btn btn-outline">Meet the Author</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">3</div>
+          <div class="hero-stat-label">Books</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">Ages 2+</div>
+          <div class="hero-stat-label">Perfect for</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">★ 5</div>
+          <div class="hero-stat-label">Amazon</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-circle">
+        <span class="splash" style="width:90px;height:90px;background:var(--teal);opacity:0.35;top:30px;left:20px"></span>
+        <span class="splash" style="width:60px;height:60px;background:var(--yellow);opacity:0.5;top:60px;right:30px"></span>
+        <span class="splash" style="width:70px;height:70px;background:var(--lime);opacity:0.35;bottom:40px;left:40px"></span>
+        <span class="splash" style="width:50px;height:50px;background:var(--red);opacity:0.3;bottom:60px;right:50px"></span>
+        <span class="splash" style="width:40px;height:40px;background:var(--orange);opacity:0.35;top:50%;left:10px"></span>
+        <span class="splash" style="width:35px;height:35px;background:var(--purple);opacity:0.3;top:20%;right:15px"></span>
+      </div>
+      <div class="book-fan">
+        <div class="fan-item"><img src="images/ABC1.jpg"     alt="First ABC Markers Activity Book" /></div>
+        <div class="fan-item"><img src="images/Shark-1.jpg"  alt="Ocean Animals Vol 1" /></div>
+        <div class="fan-item"><img src="images/Animals1.jpg" alt="Animals Vol 2" /></div>
+      </div>
+      <div class="hero-badge badge-top">
+        <span class="dot" style="width:10px;height:10px;background:var(--lime)"></span> On Amazon
+      </div>
+      <div class="hero-badge badge-bottom">
+        <span class="dot" style="width:10px;height:10px;background:var(--yellow)"></span> No mess, all fun
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Rainbow dot ticker (colors extracted from cover dot rows) -->
+  <div class="dot-ticker" aria-hidden="true">
+    <div class="dot-ticker-track">
+      <span class="dot" style="background:#e8273a"></span>
+      <span class="dot" style="background:#f07c1a"></span>
+      <span class="dot" style="background:#ffd63e"></span>
+      <span class="dot" style="background:#7fc55a"></span>
+      <span class="dot" style="background:#26b5af"></span>
+      <span class="dot" style="background:#2e9ae8"></span>
+      <span class="dot" style="background:#8050c8"></span>
+      <span class="dot" style="background:#e85fa0"></span>
+      <span class="dot" style="background:#fff;opacity:.5"></span>
+      <span class="dot" style="background:#0d2b3e"></span>
+      <span class="dot" style="background:#ffd63e"></span>
+      <span class="dot" style="background:#e85fa0"></span>
+      <span class="dot" style="background:#8050c8"></span>
+      <span class="dot" style="background:#26b5af"></span>
+      <span class="dot" style="background:#0d2b3e"></span>
+      <span class="dot" style="background:#f07c1a"></span>
+      <span class="dot" style="background:#2e9ae8"></span>
+      <span class="dot" style="background:#e8273a"></span>
+      <!-- duplicate for seamless loop -->
+      <span class="dot" style="background:#e8273a"></span>
+      <span class="dot" style="background:#f07c1a"></span>
+      <span class="dot" style="background:#ffd63e"></span>
+      <span class="dot" style="background:#7fc55a"></span>
+      <span class="dot" style="background:#26b5af"></span>
+      <span class="dot" style="background:#2e9ae8"></span>
+      <span class="dot" style="background:#8050c8"></span>
+      <span class="dot" style="background:#e85fa0"></span>
+      <span class="dot" style="background:#fff;opacity:.5"></span>
+      <span class="dot" style="background:#0d2b3e"></span>
+      <span class="dot" style="background:#ffd63e"></span>
+      <span class="dot" style="background:#e85fa0"></span>
+      <span class="dot" style="background:#8050c8"></span>
+      <span class="dot" style="background:#26b5af"></span>
+      <span class="dot" style="background:#0d2b3e"></span>
+      <span class="dot" style="background:#f07c1a"></span>
+      <span class="dot" style="background:#2e9ae8"></span>
+      <span class="dot" style="background:#e8273a"></span>
+    </div>
+  </div>
+  <div class="label-ticker" aria-hidden="true">
+    <div class="label-ticker-track">
+      <span class="label-item"><span class="dot"></span>Dot Markers</span>
+      <span class="label-item"><span class="dot"></span>Ocean Animals</span>
+      <span class="label-item"><span class="dot"></span>Jungle Friends</span>
+      <span class="label-item"><span class="dot"></span>ABC Learning</span>
+      <span class="label-item"><span class="dot"></span>Ages 2–5</span>
+      <span class="label-item"><span class="dot"></span>Screen-Free Fun</span>
+      <span class="label-item"><span class="dot"></span>50+ Pages</span>
+      <span class="label-item"><span class="dot"></span>Available on Amazon</span>
+      <span class="label-item"><span class="dot"></span>Dot Markers</span>
+      <span class="label-item"><span class="dot"></span>Ocean Animals</span>
+      <span class="label-item"><span class="dot"></span>Jungle Friends</span>
+      <span class="label-item"><span class="dot"></span>ABC Learning</span>
+      <span class="label-item"><span class="dot"></span>Ages 2–5</span>
+      <span class="label-item"><span class="dot"></span>Screen-Free Fun</span>
+      <span class="label-item"><span class="dot"></span>50+ Pages</span>
+      <span class="label-item"><span class="dot"></span>Available on Amazon</span>
+    </div>
+  </div>
+
+  <!-- ─── Books ─────────────────────────────────────────────────── -->
+  <section id="books" class="section-wrap">
+    <div class="section-inner">
+      <div class="books-header">
+        <div>
+          <div class="section-tag">
+            <span class="dot" style="background:var(--teal)"></span> My Books
+          </div>
+          <h2 class="section-heading">Activity Books Kids Love</h2>
+          <p class="section-lead">Bold dot patterns, big creativity — every book designed for little hands using dot markers.</p>
+        </div>
+        <div class="books-header-actions">
+          <button class="btn btn-export" onclick="exportBookList()">
+            ↓ Download Book List
+          </button>
+          <a href="#contact" class="btn btn-outline">Get in Touch</a>
+        </div>
+      </div>
+
+      <div class="books-grid">
+
+        <!-- Book 1 — teal accent (Shark/Ocean cover color) -->
+        <article class="book-card reveal">
+          <div class="book-img-wrap">
+            <img src="images/Shark-1.jpg" alt="Dot Markers Activity Book — Ocean Animals" />
+            <span class="book-chip chip-teal">Vol. 1</span>
+          </div>
+          <div class="book-body">
+            <div class="book-series s-teal">Ocean Animals Series</div>
+            <h3 class="book-title">Dot Markers Activity Book — Animals</h3>
+            <p class="book-desc">Dive into ocean dot fun! Big dot patterns of sharks, fish &amp; sea creatures perfect for toddlers.</p>
+            <div class="book-cta">
+              <a
+                href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="cta-teal"
+                onclick="doStamp(this)"
+              >View on Amazon ›</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Book 2 — lime accent (Sloth/Animals cover color) -->
+        <article class="book-card reveal reveal-delay-1">
+          <div class="book-img-wrap">
+            <img src="images/Animals1.jpg" alt="Dot Markers Activity Book — Animals Vol. 2" />
+            <span class="book-chip chip-lime">Vol. 2</span>
+          </div>
+          <div class="book-body">
+            <div class="book-series s-lime">Jungle Animals Series</div>
+            <h3 class="book-title">Dot Markers Activity Book — Animals Vol. 2</h3>
+            <p class="book-desc">More beloved jungle creatures, more dot-painting fun. The sequel kids keep asking for.</p>
+            <div class="book-cta">
+              <a
+                href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0GS98FJ4S"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="cta-lime"
+                onclick="doStamp(this)"
+              >View on Amazon ›</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Book 3 — forest accent (ABC/Bear cover color) -->
+        <article class="book-card reveal reveal-delay-2">
+          <div class="book-img-wrap">
+            <img src="images/ABC1.jpg" alt="First ABC Markers Activity Book" />
+            <span class="book-chip chip-forest">ABC</span>
+          </div>
+          <div class="book-body">
+            <div class="book-series s-forest">ABC Learning Series</div>
+            <h3 class="book-title">First ABC Markers Activity Book</h3>
+            <p class="book-desc">Learn the alphabet through dot painting. Letters and art in one colorful, confidence-building book.</p>
+            <div class="book-cta">
+              <a
+                href="https://www.amazon.com/First-ABC-Markers-Activity-Book/dp/B0FHHXNQZ5"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="cta-forest"
+                onclick="doStamp(this)"
+              >View on Amazon ›</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── About ─────────────────────────────────────────────────── -->
+  <section id="about">
+    <div class="about-inner">
+      <div class="about-art">
+        <span class="float-dot" style="width:140px;height:140px;background:#fff;top:-30px;left:-30px"></span>
+        <span class="float-dot" style="width:90px;height:90px;background:#fff;bottom:20px;right:-10px"></span>
+        <span class="float-dot" style="width:60px;height:60px;background:var(--yellow);top:45%;left:5%"></span>
+        <div class="about-photo-frame">
+          <!--
+            Replace with: <img src="images/author-photo.jpg" alt="Author photo" />
+          -->
+          <div class="about-photo-placeholder">
+            <div class="dots-grid">
+              <span class="dot" style="background:var(--red);opacity:.7"></span>
+              <span class="dot" style="background:var(--yellow);opacity:.7"></span>
+              <span class="dot" style="background:var(--blue);opacity:.7"></span>
+              <span class="dot" style="background:var(--lime);opacity:.7"></span>
+              <span class="dot" style="background:var(--orange);opacity:.7"></span>
+              <span class="dot" style="background:var(--purple);opacity:.7"></span>
+              <span class="dot" style="background:var(--pink);opacity:.7"></span>
+              <span class="dot" style="background:#fff;opacity:.5"></span>
+            </div>
+            <p>author-photo.jpg</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-text-side reveal">
+        <div class="about-tag">About the Author</div>
+        <h2 class="about-heading">Making creativity<br>accessible for every child.</h2>
+        <p class="about-body">
+          I create dot marker activity books that give kids a screen-free creative outlet. Every page is designed with big, easy-to-fill dots so little hands feel confident and proud of what they make.
+        </p>
+        <p class="about-body">
+          My books are loved by parents, teachers, and therapists — anywhere kids need calm, focused, joyful play. Because every child deserves to feel like an artist.
+        </p>
+        <div class="about-dots-strip">
+          <span class="dot" style="background:var(--teal)"></span>
+          <span class="dot" style="background:var(--yellow)"></span>
+          <span class="dot" style="background:var(--lime)"></span>
+          <span class="dot" style="background:var(--red)"></span>
+          <span class="dot" style="background:var(--orange)"></span>
+          <span class="dot" style="background:var(--purple)"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Contact ───────────────────────────────────────────────── -->
+  <section id="contact" class="section-wrap">
+    <div class="section-inner">
+      <div class="contact-grid">
+        <div class="contact-left reveal">
+          <div class="section-tag">
+            <span class="dot" style="background:var(--teal)"></span> Say Hello
+          </div>
+          <h2 class="section-heading">Let's connect.</h2>
+          <p>Questions, bulk orders, partnerships, or just want to share how your little one loved a book? I'd love to hear from you.</p>
+          <div class="contact-fun-dots">
+            <span class="dot" style="background:var(--teal)"></span>
+            <span class="dot" style="background:var(--yellow)"></span>
+            <span class="dot" style="background:var(--lime)"></span>
+            <span class="dot" style="background:var(--red)"></span>
+            <span class="dot" style="background:var(--orange)"></span>
+            <span class="dot" style="background:var(--purple)"></span>
+            <span class="dot" style="background:var(--pink)"></span>
+          </div>
+        </div>
+
+        <form class="contact-form reveal reveal-delay-1" onsubmit="handleSubmit(event)" novalidate>
+          <div>
+            <div class="field-label">
+              <span class="dot" style="background:var(--teal)"></span> Your name
+            </div>
+            <input type="text" placeholder="Jane Smith" required />
+          </div>
+          <div>
+            <div class="field-label">
+              <span class="dot" style="background:var(--yellow)"></span> Email address
+            </div>
+            <input type="email" placeholder="jane@example.com" required />
+          </div>
+          <div>
+            <div class="field-label">
+              <span class="dot" style="background:var(--lime)"></span> Message
+            </div>
+            <textarea placeholder="I'd love to hear from you…"></textarea>
+          </div>
+          <div class="form-submit">
+            <button type="submit" class="btn btn-primary" onclick="doStamp(this)">Send Message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ────────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-brand-dots">
+          <span class="dot" style="background:var(--teal)"></span>
+          <span class="dot" style="background:var(--yellow)"></span>
+          <span class="dot" style="background:var(--lime)"></span>
+          <span class="dot" style="background:var(--red)"></span>
+        </div>
+        Dot Marker Books
+      </div>
+      <ul class="footer-links">
+        <li><a href="#books">Books</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <p>© 2025 Dot Marker Books. All rights reserved.</p>
+      <p>Made with dots, daubers &amp; a whole lot of color.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Stamp animation
+    function doStamp(el) {
+      el.classList.remove('stamp-anim');
+      void el.offsetWidth;
+      el.classList.add('stamp-anim');
+      el.addEventListener('animationend', function() { el.classList.remove('stamp-anim'); }, { once: true });
+    }
+
+    // Simple CSV export — book titles + Amazon links
+    var BOOKS = [
+      { title: 'Dot Markers Activity Book — Animals (Vol. 1)', series: 'Ocean Animals Series', ages: '2+', pages: '50+', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3' },
+      { title: 'Dot Markers Activity Book — Animals Vol. 2',   series: 'Jungle Animals Series', ages: '2+', pages: '50+', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0GS98FJ4S' },
+      { title: 'First ABC Markers Activity Book',              series: 'ABC Learning Series',    ages: '1-5', pages: '60+', url: 'https://www.amazon.com/First-ABC-Markers-Activity-Book/dp/B0FHHXNQZ5' }
+    ];
+
+    function exportBookList() {
+      var header = 'Title,Series,Ages,Pages,Amazon URL';
+      var rows = BOOKS.map(function(b) {
+        return '"' + b.title + '","' + b.series + '",' + b.ages + ',' + b.pages + ',' + b.url;
+      });
+      var csv  = [header].concat(rows).join('\n');
+      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      var url  = URL.createObjectURL(blob);
+      var a    = document.createElement('a');
+      a.href = url; a.download = 'dot-marker-books.csv'; a.click();
+      URL.revokeObjectURL(url);
+      var toast = document.getElementById('exportToast');
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2800);
+    }
+
+    // Scroll-reveal
+    var revealEls = document.querySelectorAll('.reveal');
+    var observer  = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    revealEls.forEach(function(el) { observer.observe(el); });
+
+    // Contact form
+    function handleSubmit(e) {
+      e.preventDefault();
+      var btn  = e.target.querySelector('.btn-primary');
+      var orig = btn.textContent;
+      btn.textContent       = '✓ Sent!';
+      btn.style.background  = 'var(--lime-dark)';
+      setTimeout(function() { btn.textContent = orig; btn.style.background = ''; e.target.reset(); }, 3000);
+    }
+  </script>
+
+</body>
+</html>
