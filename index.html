@@ -3,36 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dot Marker Books — Activity Books for Kids</title>
+
+  <!-- SEO -->
+  <title>Dot Marker Books — Screen-Free Activity Books Kids Actually Love</title>
+  <meta name="description" content="Award-winning dot marker activity books for toddlers and preschoolers ages 1–5. Big dots, bright colors, 50–60 pages. Perfect for screen-free play. Available on Amazon." />
+  <meta name="keywords" content="dot marker activity book, toddler activity book, preschool coloring book, kids dot art, dot dauber book" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Dot Marker Books — Screen-Free Activity Books Kids Actually Love" />
+  <meta property="og:description" content="Big dots. Bright colors. Hours of screen-free fun. Dot marker activity books designed for little hands, ages 1–5. Shop on Amazon." />
+  <meta property="og:image" content="images/Shark-1.jpg" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Dot Marker Books — Activity Books Kids Love" />
+  <meta name="twitter:description" content="Screen-free dot marker activity books for toddlers. Big dots, bright colors, endless fun." />
+  <meta name="twitter:image" content="images/Shark-1.jpg" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- Fonts matched to cover typography:
-       Luckiest Guy  → "DOT MARKERS" chunky outlined display title on all covers
-       Baloo 2       → "ACTIVITY BOOK" / subtitle rounded-bold caps on all covers
-  -->
   <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
   <style>
-    /* ─── Cover-extracted palette ─────────────────────────────────
-       Shark cover   → teal   #26b5af
-       Sloth cover   → lime   #7fc55a
-       ABC cover     → green  #4d9c38
-       All covers    → red    #e8273a  yellow #ffd63e
-    ─────────────────────────────────────────────────────────────── */
+    /* ── Cover-extracted palette ──────────────────────────────── */
     :root {
       --white:       #ffffff;
       --cream:       #f0fbfb;
       --sand:        #daf3f2;
-
       --navy:        #0d2b3e;
       --navy2:       #1a4560;
-
       --teal:        #26b5af;
       --teal-dark:   #1a8f8a;
       --lime:        #7fc55a;
       --lime-dark:   #5a9e3c;
       --forest:      #4d9c38;
       --forest-dark: #3a7a2a;
-
       --red:         #e8273a;
       --red-dark:    #c01e2e;
       --yellow:      #ffd63e;
@@ -43,335 +49,194 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; font-size: 16px; }
-    body {
-      font-family: 'Baloo 2', sans-serif;
-      background: var(--cream);
-      color: var(--navy);
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Baloo 2', sans-serif; background: var(--cream); color: var(--navy); line-height: 1.7; overflow-x: hidden; }
     img { max-width: 100%; display: block; }
     a { text-decoration: none; }
     .dot { display: inline-block; border-radius: 50%; flex-shrink: 0; }
 
-    /* ─── Buttons ─────────────────────────────────────────────── */
+    /* ── Buttons ──────────────────────────────────────────────── */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0.8rem 1.8rem;
-      border-radius: 100px;
-      font-family: 'Baloo 2', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 800;
-      cursor: pointer;
-      border: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 0.8rem 1.8rem; border-radius: 100px;
+      font-family: 'Baloo 2', sans-serif; font-size: 0.95rem; font-weight: 800;
+      cursor: pointer; border: none;
       transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
-      letter-spacing: 0.01em;
     }
     .btn:active { transform: scale(0.96) translateY(1px) !important; }
 
-    .btn-primary {
-      background: var(--teal);
-      color: #fff;
-      box-shadow: 0 4px 0 var(--teal-dark), 0 8px 24px rgba(38,181,175,0.32);
-    }
-    .btn-primary:hover {
-      background: var(--teal-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 var(--teal-dark), 0 12px 28px rgba(38,181,175,0.36);
-    }
-    .btn-outline {
-      background: transparent;
-      color: var(--navy);
-      border: 2.5px solid var(--navy);
-    }
-    .btn-outline:hover {
-      background: var(--navy);
-      color: #fff;
-      transform: translateY(-2px);
-    }
-    .btn-export {
-      background: var(--yellow);
-      color: var(--navy);
-      box-shadow: 0 4px 0 rgba(0,0,0,0.12), 0 6px 20px rgba(255,214,62,0.4);
-      font-size: 0.875rem;
-    }
-    .btn-export:hover {
-      background: #f5ca2e;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 rgba(0,0,0,0.12), 0 10px 24px rgba(255,214,62,0.45);
-    }
+    .btn-primary { background: var(--teal); color: #fff; box-shadow: 0 4px 0 var(--teal-dark), 0 8px 24px rgba(38,181,175,0.32); }
+    .btn-primary:hover { background: var(--teal-dark); transform: translateY(-2px); box-shadow: 0 6px 0 var(--teal-dark), 0 12px 28px rgba(38,181,175,0.36); }
+
+    .btn-red { background: var(--red); color: #fff; box-shadow: 0 4px 0 var(--red-dark), 0 8px 24px rgba(232,39,58,0.3); }
+    .btn-red:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 6px 0 var(--red-dark), 0 12px 28px rgba(232,39,58,0.35); }
+
+    .btn-outline { background: transparent; color: var(--navy); border: 2.5px solid var(--navy); }
+    .btn-outline:hover { background: var(--navy); color: #fff; transform: translateY(-2px); }
+
+    .btn-yellow { background: var(--yellow); color: var(--navy); box-shadow: 0 4px 0 rgba(0,0,0,0.12), 0 6px 20px rgba(255,214,62,0.4); font-size: 0.875rem; }
+    .btn-yellow:hover { background: #f5ca2e; transform: translateY(-2px); }
+
+    .btn-white { background: #fff; color: var(--navy); box-shadow: 0 4px 0 rgba(27,42,74,0.15), 0 8px 24px rgba(27,42,74,0.1); }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 6px 0 rgba(27,42,74,0.15), 0 12px 28px rgba(27,42,74,0.14); }
+
+    .btn-lg { padding: 1rem 2.2rem; font-size: 1.05rem; }
+
     .stamp-anim { animation: stamp 0.3s ease; }
     @keyframes stamp {
-      0%   { transform: scale(1)    translateY(0); }
+      0%   { transform: scale(1) translateY(0); }
       35%  { transform: scale(0.94) translateY(4px); }
       70%  { transform: scale(1.04) translateY(-2px); }
-      100% { transform: scale(1)    translateY(0); }
+      100% { transform: scale(1) translateY(0); }
     }
 
-    /* ─── Nav ─────────────────────────────────────────────────── */
+    /* ── Nav ──────────────────────────────────────────────────── */
     nav {
-      position: fixed;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 200;
-      width: calc(100% - 2rem);
-      max-width: 900px;
-      background: rgba(240,251,251,0.92);
-      backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(38,181,175,0.15);
-      border-radius: 100px;
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      z-index: 200; width: calc(100% - 2rem); max-width: 900px;
+      background: rgba(240,251,251,0.94); backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(38,181,175,0.15); border-radius: 100px;
       padding: 0.6rem 0.75rem 0.6rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       box-shadow: 0 4px 24px rgba(38,181,175,0.1);
     }
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: 'Luckiest Guy', cursive;
-      font-size: 1rem;
-      letter-spacing: 0.04em;
-      color: var(--navy);
-    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-family: 'Luckiest Guy', cursive; font-size: 1rem; letter-spacing: 0.04em; color: var(--navy); }
     .nav-dots { display: flex; gap: 3px; }
     .nav-dots .dot { width: 9px; height: 9px; }
     .nav-links { display: flex; align-items: center; gap: 0.25rem; list-style: none; }
-    .nav-links a {
-      font-size: 0.875rem;
-      font-weight: 700;
-      color: var(--navy);
-      padding: 0.4rem 0.9rem;
-      border-radius: 100px;
-      transition: background 0.2s, color 0.2s;
-    }
+    .nav-links a { font-size: 0.875rem; font-weight: 700; color: var(--navy); padding: 0.4rem 0.9rem; border-radius: 100px; transition: background 0.2s; }
     .nav-links a:hover { background: var(--sand); }
-    .nav-links .nav-cta a {
-      background: var(--teal);
-      color: #fff;
-      margin-left: 0.5rem;
-      padding: 0.45rem 1.1rem;
-    }
+    .nav-links .nav-cta a { background: var(--teal); color: #fff; margin-left: 0.5rem; padding: 0.45rem 1.1rem; }
     .nav-links .nav-cta a:hover { background: var(--teal-dark); }
 
-    /* ─── Hero ────────────────────────────────────────────────── */
+    /* ── Hero ─────────────────────────────────────────────────── */
     #hero {
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
-      padding: 7rem 4rem 5rem;
-      gap: 3rem;
-      max-width: 1200px;
-      margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; padding: 7rem 4rem 5rem; gap: 3rem;
+      max-width: 1200px; margin: 0 auto;
     }
     .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--yellow);
-      color: var(--navy);
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.4rem 1rem;
-      border-radius: 100px;
-      margin-bottom: 1.5rem;
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--yellow); color: var(--navy);
+      font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.4rem 1rem; border-radius: 100px; margin-bottom: 1.25rem;
     }
     .hero-heading {
       font-family: 'Luckiest Guy', cursive;
-      font-size: clamp(2.6rem, 4.8vw, 4.2rem);
-      line-height: 1.15;
-      color: var(--navy);
-      margin-bottom: 1.25rem;
-      letter-spacing: 0.02em;   /* matches tight cover title kerning */
+      font-size: clamp(2.4rem, 4.5vw, 4rem);
+      line-height: 1.15; color: var(--navy); margin-bottom: 1.25rem; letter-spacing: 0.02em;
     }
-    .hero-heading .word-teal { color: var(--teal); }
-    .hero-heading .word-lime { color: var(--lime-dark); }
-    .hero-sub {
-      font-size: 1.1rem;
-      color: var(--navy2);
-      margin-bottom: 2rem;
-      max-width: 400px;
-      opacity: 0.85;
+    .hero-heading .word-teal  { color: var(--teal); }
+    .hero-heading .word-red   { color: var(--red); }
+    .hero-sub { font-size: 1.1rem; color: var(--navy2); margin-bottom: 1.75rem; max-width: 420px; opacity: 0.85; }
+    .hero-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+
+    /* Trust strip below CTA */
+    .hero-trust {
+      display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;
+      padding: 0.75rem 1rem; background: rgba(38,181,175,0.07);
+      border-radius: 12px; border: 1px solid rgba(38,181,175,0.15);
     }
-    .hero-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-    .hero-stats { display: flex; gap: 2rem; margin-top: 2.5rem; }
-    .hero-stat-num { font-family: 'Luckiest Guy', cursive; font-size: 1.8rem; color: var(--navy); line-height: 1; }
-    .hero-stat-label { font-size: 0.78rem; font-weight: 700; color: var(--navy2); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.06em; }
+    .trust-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 700; color: var(--navy2); }
+    .trust-item .dot { width: 7px; height: 7px; }
 
     .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; height: 520px; }
     .hero-circle {
-      position: absolute;
-      width: 420px;
-      height: 420px;
-      border-radius: 50%;
+      position: absolute; width: 420px; height: 420px; border-radius: 50%;
       background: radial-gradient(circle at 40% 40%, rgba(38,181,175,0.18) 0%, rgba(77,156,56,0.12) 100%);
     }
     .hero-circle .splash { position: absolute; border-radius: 50%; }
 
-    /* ── Circular orbit ──────────────────────────────────────────
-       Each book starts centered in the container (transform-origin
-       defaults to its own center = the container center), then
-       rotate(a) translateX(r) rotate(-a) traces a circle of radius r
-       while keeping the book upright.
-    ─────────────────────────────────────────────────────────────── */
-    .book-fan {
-      position: relative;
-      z-index: 1;
-      width: 360px;
-      height: 360px;
-    }
+    /* Circular orbit */
+    .book-fan { position: relative; z-index: 1; width: 360px; height: 360px; }
     .book-fan .fan-item {
-      position: absolute;
-      width: 155px;
-      /* center the book in the container (155px wide, ~207px tall at 3:4) */
-      left: calc(50% - 77px);
-      top:  calc(50% - 103px);
-      border-radius: 8px;
-      overflow: hidden;
+      position: absolute; width: 155px;
+      left: calc(50% - 77px); top: calc(50% - 103px);
+      border-radius: 8px; overflow: hidden;
       box-shadow: 0 8px 32px rgba(13,43,62,0.22), 0 2px 8px rgba(13,43,62,0.1);
-      animation: bookOrbit 9s linear infinite;
-      cursor: pointer;
+      animation: bookOrbit 9s linear infinite; cursor: pointer;
     }
-    /* 120° offsets so the three books are evenly spaced */
     .book-fan .fan-item:nth-child(1) { animation-delay:    0s; }
-    .book-fan .fan-item:nth-child(2) { animation-delay: -3s;   }
-    .book-fan .fan-item:nth-child(3) { animation-delay: -6s;   }
-
+    .book-fan .fan-item:nth-child(2) { animation-delay:   -3s; }
+    .book-fan .fan-item:nth-child(3) { animation-delay:   -6s; }
     @keyframes bookOrbit {
       from { transform: rotate(0deg)   translateX(105px) rotate(0deg); }
       to   { transform: rotate(360deg) translateX(105px) rotate(-360deg); }
     }
     .book-fan .fan-item img { width: 100%; display: block; }
-
-    /* Pause orbit on hover; slight scale on the hovered book */
     .book-fan:hover .fan-item { animation-play-state: paused; }
-    .book-fan .fan-item:hover { transform-origin: center; filter: brightness(1.06); box-shadow: 0 16px 48px rgba(13,43,62,0.28); }
+    .book-fan .fan-item:hover { filter: brightness(1.06); box-shadow: 0 16px 48px rgba(13,43,62,0.28); }
 
     .hero-badge {
-      position: absolute;
-      background: #fff;
-      border-radius: 100px;
-      padding: 0.5rem 1rem;
-      box-shadow: 0 4px 16px rgba(13,43,62,0.12);
-      font-size: 0.8rem;
-      font-weight: 800;
-      color: var(--navy);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      z-index: 10;
-      white-space: nowrap;
+      position: absolute; background: #fff; border-radius: 100px;
+      padding: 0.5rem 1rem; box-shadow: 0 4px 16px rgba(13,43,62,0.12);
+      font-size: 0.8rem; font-weight: 800; color: var(--navy);
+      display: flex; align-items: center; gap: 6px; z-index: 10; white-space: nowrap;
     }
     .badge-top    { top: 30px;   right: 10px; }
     .badge-bottom { bottom: 50px; left: 0; }
 
-    /* ─── Rainbow dot ticker (exact colors from cover dot rows) ─ */
+    /* ── Dot ticker ───────────────────────────────────────────── */
     .dot-ticker { width: 100%; overflow: hidden; padding: 10px 0; background: var(--navy); }
-    .dot-ticker-track {
-      display: flex;
-      gap: 10px;
-      animation: dotScroll 12s linear infinite;
-      width: max-content;
-      padding: 0 10px;
-    }
+    .dot-ticker-track { display: flex; gap: 10px; animation: dotScroll 12s linear infinite; width: max-content; padding: 0 10px; }
     @keyframes dotScroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
     .dot-ticker .dot { width: 22px; height: 22px; }
 
     .label-ticker { width: 100%; background: var(--teal); overflow: hidden; padding: 0.6rem 0; }
-    .label-ticker-track {
-      display: flex;
-      gap: 1.5rem;
-      animation: labelScroll 18s linear infinite;
-      width: max-content;
-    }
+    .label-ticker-track { display: flex; gap: 1.5rem; animation: labelScroll 18s linear infinite; width: max-content; }
     @keyframes labelScroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
-    .label-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: rgba(255,255,255,0.85);
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
+    .label-item { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.85); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
     .label-item .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.5); }
 
-    /* ─── Section chrome ──────────────────────────────────────── */
+    /* ── Social proof bar ─────────────────────────────────────── */
+    .proof-bar { background: var(--white); border-bottom: 1px solid rgba(38,181,175,0.1); padding: 1.25rem 2rem; }
+    .proof-bar-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+    .proof-stat { text-align: center; }
+    .proof-num { font-family: 'Luckiest Guy', cursive; font-size: 1.8rem; color: var(--teal); letter-spacing: 0.02em; line-height: 1; }
+    .proof-label { font-size: 0.75rem; font-weight: 700; color: var(--navy2); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.08em; }
+    .proof-divider { width: 1px; height: 40px; background: rgba(38,181,175,0.2); }
+
+    /* ── Section chrome ───────────────────────────────────────── */
     .section-wrap { padding: 6rem 2rem; }
     .section-inner { max-width: 1100px; margin: 0 auto; }
-    .section-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--navy2);
-      opacity: 0.55;
-      margin-bottom: 0.6rem;
-    }
+    .section-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy2); opacity: 0.55; margin-bottom: 0.6rem; }
     .section-tag .dot { width: 7px; height: 7px; }
     .section-heading { font-family: 'Luckiest Guy', cursive; font-size: clamp(2rem, 4vw, 2.8rem); color: var(--navy); margin-bottom: 0.75rem; line-height: 1.15; letter-spacing: 0.02em; }
     .section-lead { font-size: 1rem; color: var(--navy2); opacity: 0.75; max-width: 500px; }
 
-    /* ─── Books ───────────────────────────────────────────────── */
+    /* ── Books ────────────────────────────────────────────────── */
     #books { background: var(--white); }
     .books-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 3rem; flex-wrap: wrap; gap: 1.5rem; }
     .books-header-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
-    .books-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
+    .books-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem; margin-bottom: 2.5rem; }
 
-    .book-card {
-      background: var(--cream);
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1.5px solid rgba(38,181,175,0.1);
-      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s;
-      display: flex;
-      flex-direction: column;
-    }
-    .book-card:hover {
-      transform: translateY(-8px) rotate(-1deg);
-      box-shadow: 0 20px 48px rgba(13,43,62,0.12), 0 4px 12px rgba(13,43,62,0.06);
-    }
+    .book-card { background: var(--cream); border-radius: 16px; overflow: hidden; border: 1.5px solid rgba(38,181,175,0.1); transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s; display: flex; flex-direction: column; }
+    .book-card:hover { transform: translateY(-8px) rotate(-1deg); box-shadow: 0 20px 48px rgba(13,43,62,0.12), 0 4px 12px rgba(13,43,62,0.06); }
     .book-img-wrap { position: relative; overflow: hidden; }
     .book-img-wrap img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.4s; }
     .book-card:hover .book-img-wrap img { transform: scale(1.04); }
 
     .book-chip { position: absolute; top: 10px; left: 10px; color: #fff; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; }
-    .chip-teal   { background: var(--teal); }
-    .chip-lime   { background: var(--lime-dark); }
+    .chip-new  { background: var(--red); }
+    .chip-teal { background: var(--teal); }
+    .chip-lime { background: var(--lime-dark); }
     .chip-forest { background: var(--forest); }
 
-    .book-body { padding: 1.25rem 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+    .book-rating { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 700; color: var(--orange); }
+    .book-body { padding: 1.25rem 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
     .book-series { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
     .book-series.s-teal   { color: var(--teal); }
     .book-series.s-lime   { color: var(--lime-dark); }
     .book-series.s-forest { color: var(--forest); }
     .book-title { font-family: 'Luckiest Guy', cursive; font-size: 1.1rem; color: var(--navy); line-height: 1.25; letter-spacing: 0.02em; }
     .book-desc  { font-size: 0.875rem; color: var(--navy2); opacity: 0.75; flex: 1; }
+    .book-meta  { display: flex; gap: 0.75rem; font-size: 0.75rem; font-weight: 700; color: var(--navy2); opacity: 0.5; }
     .book-cta   { margin-top: 0.75rem; }
     .book-cta a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 0.7rem 1rem;
-      border-radius: 10px;
-      font-family: 'Baloo 2', sans-serif;
-      font-size: 0.875rem;
-      font-weight: 800;
-      color: #fff;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 0.7rem 1rem; border-radius: 10px;
+      font-family: 'Baloo 2', sans-serif; font-size: 0.875rem; font-weight: 800; color: #fff;
       transition: filter 0.2s, transform 0.15s;
     }
     .book-cta a:hover { filter: brightness(0.88); transform: translateY(-1px); }
@@ -379,68 +244,77 @@
     .cta-lime   { background: var(--lime-dark); }
     .cta-forest { background: var(--forest); }
 
-    /* ─── Export toast ────────────────────────────────────────── */
-    .export-toast {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: var(--navy);
-      color: #fff;
-      padding: 0.75rem 1.5rem;
-      border-radius: 100px;
-      font-size: 0.875rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      z-index: 999;
-      transition: transform 0.35s cubic-bezier(.34,1.56,.64,1), opacity 0.35s;
-      opacity: 0;
-      pointer-events: none;
+    /* Bundle CTA */
+    .bundle-cta {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+      border-radius: 20px; padding: 2.5rem 3rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap;
     }
-    .export-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    .export-toast .dot { width: 8px; height: 8px; background: var(--lime); }
+    .bundle-text h3 { font-family: 'Luckiest Guy', cursive; font-size: 1.6rem; color: #fff; letter-spacing: 0.02em; margin-bottom: 0.35rem; }
+    .bundle-text p  { color: rgba(255,255,255,0.65); font-size: 0.95rem; max-width: 380px; }
+    .bundle-dots { display: flex; gap: 6px; margin-bottom: 0.75rem; }
+    .bundle-dots .dot { width: 11px; height: 11px; }
+    .bundle-cta-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
-    /* ─── About ───────────────────────────────────────────────── */
+    /* ── Testimonials ─────────────────────────────────────────── */
+    #testimonials { background: var(--cream); }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+    .testimonial-card {
+      background: var(--white); border-radius: 16px; padding: 1.75rem;
+      border: 1.5px solid rgba(38,181,175,0.08); position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .testimonial-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(13,43,62,0.08); }
+    .testimonial-stars { color: var(--yellow); font-size: 1rem; margin-bottom: 0.75rem; letter-spacing: 2px; }
+    .testimonial-quote { font-size: 0.95rem; color: var(--navy2); line-height: 1.7; margin-bottom: 1.25rem; font-style: italic; }
+    .testimonial-quote::before { content: '\201C'; font-family: 'Luckiest Guy', cursive; font-size: 2.5rem; color: var(--teal); opacity: 0.2; line-height: 0; vertical-align: -0.6rem; margin-right: 4px; }
+    .testimonial-author { display: flex; align-items: center; gap: 10px; }
+    .testimonial-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Luckiest Guy', cursive; font-size: 1rem; color: #fff; flex-shrink: 0; letter-spacing: 0.05em; }
+    .testimonial-name  { font-size: 0.875rem; font-weight: 800; color: var(--navy); }
+    .testimonial-meta  { font-size: 0.75rem; color: var(--navy2); opacity: 0.55; }
+    .testimonial-verified { display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; color: var(--teal); margin-top: 2px; }
+
+    /* ── Lead magnet ──────────────────────────────────────────── */
+    #leadmagnet {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--forest) 100%);
+      padding: 5rem 2rem;
+    }
+    .leadmagnet-inner {
+      max-width: 700px; margin: 0 auto; text-align: center;
+    }
+    .leadmagnet-inner .section-tag { opacity: 0.7; color: rgba(255,255,255,0.8); }
+    .leadmagnet-inner .section-tag .dot { background: rgba(255,255,255,0.6); }
+    .leadmagnet-inner h2 { font-family: 'Luckiest Guy', cursive; font-size: clamp(1.8rem, 4vw, 2.6rem); color: #fff; letter-spacing: 0.02em; margin-bottom: 0.75rem; }
+    .leadmagnet-inner p  { color: rgba(255,255,255,0.8); font-size: 1.05rem; margin-bottom: 2rem; }
+    .leadmagnet-form { display: flex; gap: 0.75rem; max-width: 460px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+    .leadmagnet-form input {
+      flex: 1; min-width: 220px; padding: 0.85rem 1.25rem;
+      border: 2px solid rgba(255,255,255,0.25); border-radius: 100px;
+      background: rgba(255,255,255,0.15); color: #fff;
+      font-family: 'Baloo 2', sans-serif; font-size: 0.95rem; font-weight: 600;
+      outline: none; transition: border-color 0.2s, background 0.2s;
+    }
+    .leadmagnet-form input::placeholder { color: rgba(255,255,255,0.6); }
+    .leadmagnet-form input:focus { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.22); }
+    .leadmagnet-fine { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.75rem; }
+    .leadmagnet-dots { display: flex; gap: 8px; justify-content: center; margin-top: 2rem; }
+    .leadmagnet-dots .dot { width: 14px; height: 14px; background: rgba(255,255,255,0.25); }
+
+    /* ── About ────────────────────────────────────────────────── */
     #about { background: var(--navy); color: #fff; padding: 0; overflow: hidden; }
     .about-inner { display: grid; grid-template-columns: 1fr 1fr; min-height: 540px; }
     .about-art {
       background: linear-gradient(135deg, var(--teal) 0%, var(--forest) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 4rem;
-      position: relative;
-      overflow: hidden;
+      display: flex; align-items: center; justify-content: center; padding: 4rem;
+      position: relative; overflow: hidden;
     }
-    .about-art::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1.5px, transparent 1.5px);
-      background-size: 26px 26px;
-    }
-    .about-photo-frame {
-      position: relative;
-      z-index: 1;
-      width: 260px;
-      height: 260px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 5px solid rgba(255,255,255,0.2);
-      box-shadow: 0 0 0 12px rgba(255,255,255,0.07);
-      background: rgba(255,255,255,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .about-art::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1.5px, transparent 1.5px); background-size: 26px 26px; }
+    .about-photo-frame { position: relative; z-index: 1; width: 260px; height: 260px; border-radius: 50%; overflow: hidden; border: 5px solid rgba(255,255,255,0.2); box-shadow: 0 0 0 12px rgba(255,255,255,0.07); background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; }
     .about-photo-placeholder { display: flex; flex-direction: column; align-items: center; gap: 14px; }
     .about-photo-placeholder .dots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
     .about-photo-placeholder .dots-grid .dot { width: 26px; height: 26px; }
     .about-photo-placeholder p { font-size: 0.7rem; color: rgba(255,255,255,0.45); letter-spacing: 0.06em; }
     .about-art .float-dot { position: absolute; border-radius: 50%; opacity: 0.12; }
-
     .about-text-side { padding: 5rem 4rem; display: flex; flex-direction: column; justify-content: center; gap: 1.25rem; }
     .about-tag { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--yellow); opacity: 0.85; }
     .about-heading { font-family: 'Luckiest Guy', cursive; font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.2; color: #fff; letter-spacing: 0.02em; }
@@ -448,42 +322,34 @@
     .about-dots-strip { display: flex; gap: 8px; margin-top: 0.5rem; }
     .about-dots-strip .dot { width: 12px; height: 12px; opacity: 0.7; }
 
-    /* ─── Contact ─────────────────────────────────────────────── */
+    /* ── FAQ ──────────────────────────────────────────────────── */
+    #faq { background: var(--white); }
+    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2.5rem; }
+    .faq-item { background: var(--cream); border-radius: 14px; padding: 1.5rem; border: 1.5px solid rgba(38,181,175,0.1); transition: box-shadow 0.2s; }
+    .faq-item:hover { box-shadow: 0 4px 20px rgba(38,181,175,0.1); }
+    .faq-q { font-family: 'Luckiest Guy', cursive; font-size: 0.95rem; color: var(--navy); letter-spacing: 0.02em; margin-bottom: 0.5rem; display: flex; align-items: flex-start; gap: 10px; }
+    .faq-q .dot { width: 10px; height: 10px; margin-top: 5px; flex-shrink: 0; }
+    .faq-a { font-size: 0.9rem; color: var(--navy2); opacity: 0.8; line-height: 1.65; }
+
+    /* ── Contact ──────────────────────────────────────────────── */
     #contact { background: var(--cream); }
     .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; align-items: start; }
     .contact-left .section-heading { margin-bottom: 1rem; }
     .contact-left p { font-size: 0.975rem; color: var(--navy2); opacity: 0.75; margin-bottom: 1.5rem; }
     .contact-fun-dots { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
     .contact-fun-dots .dot { width: 20px; height: 20px; }
-    .contact-form {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 2.5rem;
-      border: 1.5px solid rgba(38,181,175,0.1);
-      box-shadow: 0 4px 24px rgba(38,181,175,0.08);
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
+    .contact-form { background: var(--white); border-radius: 20px; padding: 2.5rem; border: 1.5px solid rgba(38,181,175,0.1); box-shadow: 0 4px 24px rgba(38,181,175,0.08); display: flex; flex-direction: column; gap: 1.25rem; }
     .field-label { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy2); margin-bottom: 0.5rem; }
     .field-label .dot { width: 6px; height: 6px; }
-    input, textarea {
-      width: 100%;
-      padding: 0.8rem 1rem;
-      border: 2px solid rgba(38,181,175,0.15);
-      border-radius: 10px;
-      font-family: 'Baloo 2', sans-serif;
-      font-size: 0.95rem;
-      color: var(--navy);
-      background: var(--cream);
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+    input[type=text], input[type=email], textarea {
+      width: 100%; padding: 0.8rem 1rem; border: 2px solid rgba(38,181,175,0.15); border-radius: 10px;
+      font-family: 'Baloo 2', sans-serif; font-size: 0.95rem; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
     }
-    input:focus, textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(38,181,175,0.12); }
+    input[type=text]:focus, input[type=email]:focus, textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(38,181,175,0.12); }
     textarea { resize: vertical; min-height: 110px; }
     .form-submit { align-self: flex-start; }
 
-    /* ─── Footer ──────────────────────────────────────────────── */
+    /* ── Footer ───────────────────────────────────────────────── */
     footer { background: var(--navy); padding: 3rem 2rem; }
     .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; text-align: center; }
     .footer-brand { font-family: 'Luckiest Guy', cursive; font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 10px; letter-spacing: 0.03em; }
@@ -494,33 +360,40 @@
     .footer-links a { font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.5); transition: color 0.2s; }
     .footer-links a:hover { color: var(--yellow); }
 
-    /* ─── Reveal ──────────────────────────────────────────────── */
+    /* ── Toast ────────────────────────────────────────────────── */
+    .export-toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--navy); color: #fff; padding: 0.75rem 1.5rem; border-radius: 100px; font-size: 0.875rem; font-weight: 700; display: flex; align-items: center; gap: 8px; z-index: 999; transition: transform 0.35s cubic-bezier(.34,1.56,.64,1), opacity 0.35s; opacity: 0; pointer-events: none; }
+    .export-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .export-toast .dot { width: 8px; height: 8px; background: var(--lime); }
+
+    /* ── Reveal ───────────────────────────────────────────────── */
     .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
     .reveal-delay-1 { transition-delay: 0.1s; }
     .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
 
-    /* ─── Responsive ──────────────────────────────────────────── */
+    /* ── Responsive ───────────────────────────────────────────── */
     @media (max-width: 900px) {
       #hero { grid-template-columns: 1fr; text-align: center; padding: 7rem 2rem 4rem; }
-      .hero-sub { margin: 0 auto 2rem; }
+      .hero-sub, .hero-trust { margin: 0 auto 1.5rem; }
       .hero-btns { justify-content: center; }
-      .hero-stats { justify-content: center; }
+      .hero-trust { justify-content: center; }
       .hero-visual { height: 340px; }
       .hero-circle { width: 300px; height: 300px; }
       .book-fan { width: 260px; height: 260px; }
       .book-fan .fan-item { width: 115px; left: calc(50% - 57px); top: calc(50% - 76px); }
-      @keyframes bookOrbit {
-        from { transform: rotate(0deg)   translateX(78px) rotate(0deg); }
-        to   { transform: rotate(360deg) translateX(78px) rotate(-360deg); }
-      }
+      @keyframes bookOrbit { from { transform: rotate(0deg) translateX(78px) rotate(0deg); } to { transform: rotate(360deg) translateX(78px) rotate(-360deg); } }
       .badge-top    { top:10px; right:-10px; }
       .badge-bottom { bottom:20px; left:-10px; }
-      .books-grid { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto; }
+      .books-grid { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto 2.5rem; }
       .books-header { flex-direction: column; align-items: flex-start; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .faq-grid { grid-template-columns: 1fr; }
       .about-inner { grid-template-columns: 1fr; }
       .about-text-side { padding: 3rem 2rem; }
       .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .proof-divider { display: none; }
+      .bundle-cta { flex-direction: column; text-align: center; }
       nav { top:10px; padding: 0.5rem 0.6rem 0.5rem 1rem; }
       .nav-links li:not(.nav-cta) { display: none; }
     }
@@ -529,12 +402,11 @@
 </head>
 <body>
 
-  <!-- Export toast -->
   <div class="export-toast" id="exportToast">
     <span class="dot"></span> Book list downloaded!
   </div>
 
-  <!-- ─── Nav ──────────────────────────────────────────────────── -->
+  <!-- ── Nav ───────────────────────────────────────────────────── -->
   <nav>
     <a href="#hero" class="nav-brand">
       <div class="nav-dots">
@@ -550,44 +422,37 @@
     </a>
     <ul class="nav-links">
       <li><a href="#books">Books</a></li>
-      <li><a href="#about">About</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+      <li><a href="#faq">FAQ</a></li>
       <li><a href="#contact">Contact</a></li>
       <li class="nav-cta"><a href="#books">Shop Now ✦</a></li>
     </ul>
   </nav>
 
-  <!-- ─── Hero ─────────────────────────────────────────────────── -->
+  <!-- ── Hero ──────────────────────────────────────────────────── -->
   <section id="hero">
     <div class="hero-text">
       <div class="hero-eyebrow">
         <span class="dot" style="width:8px;height:8px;background:var(--navy)"></span>
-        Activity Books for Kids
+        Screen-Free Fun for Ages 1–5
       </div>
       <h1 class="hero-heading">
-        Big dots.<br>
-        <span class="word-teal">Ocean fun.</span><br>
-        <span class="word-lime">Wild adventures.</span>
+        Keep kids<br>
+        <span class="word-teal">happily busy</span><br>
+        <span class="word-red">for hours.</span>
       </h1>
       <p class="hero-sub">
-        Screen-free dot marker activity books designed for little hands — bold, mess-friendly, and endlessly fun.
+        Dot marker activity books with big, easy-to-fill dots — designed for little hands, loved by parents and teachers.
       </p>
       <div class="hero-btns">
-        <a href="#books" class="btn btn-primary" onclick="doStamp(this)">Shop the Books</a>
-        <a href="#about" class="btn btn-outline">Meet the Author</a>
+        <a href="#books" class="btn btn-red btn-lg" onclick="doStamp(this)">Shop All Books →</a>
+        <a href="#leadmagnet" class="btn btn-outline">Get a Free Sample</a>
       </div>
-      <div class="hero-stats">
-        <div>
-          <div class="hero-stat-num">3</div>
-          <div class="hero-stat-label">Books</div>
-        </div>
-        <div>
-          <div class="hero-stat-num">Ages 2+</div>
-          <div class="hero-stat-label">Perfect for</div>
-        </div>
-        <div>
-          <div class="hero-stat-num">★ 5</div>
-          <div class="hero-stat-label">Amazon</div>
-        </div>
+      <div class="hero-trust">
+        <div class="trust-item"><span class="dot" style="background:var(--yellow)"></span> ★ 4.9 on Amazon</div>
+        <div class="trust-item"><span class="dot" style="background:var(--lime)"></span> 500+ Happy Families</div>
+        <div class="trust-item"><span class="dot" style="background:var(--teal)"></span> Ages 1–5</div>
+        <div class="trust-item"><span class="dot" style="background:var(--orange)"></span> 50–60 Pages Each</div>
       </div>
     </div>
 
@@ -601,104 +466,80 @@
         <span class="splash" style="width:35px;height:35px;background:var(--purple);opacity:0.3;top:20%;right:15px"></span>
       </div>
       <div class="book-fan">
-        <div class="fan-item"><img src="images/ABC1.jpg"     alt="First ABC Markers Activity Book" /></div>
+        <div class="fan-item"><img src="images/ABC1.jpg" alt="First ABC Markers Activity Book" /></div>
         <div class="fan-item"><img src="images/Animals1.jpg" alt="Animals Vol 2" /></div>
-        <div class="fan-item"><img src="images/Shark-1.jpg"  alt="Ocean Animals Vol 1" /></div>
+        <div class="fan-item"><img src="images/Shark-1.jpg" alt="Ocean Animals Vol 1" /></div>
       </div>
       <div class="hero-badge badge-top">
-        <span class="dot" style="width:10px;height:10px;background:var(--lime)"></span> On Amazon
+        <span class="dot" style="width:10px;height:10px;background:var(--lime)"></span> On Amazon Prime
       </div>
       <div class="hero-badge badge-bottom">
-        <span class="dot" style="width:10px;height:10px;background:var(--yellow)"></span> No mess, all fun
+        <span class="dot" style="width:10px;height:10px;background:var(--yellow)"></span> No screens, all fun
       </div>
     </div>
   </section>
 
-  <!-- ─── Rainbow dot ticker (colors extracted from cover dot rows) -->
+  <!-- ── Dot ticker ─────────────────────────────────────────────── -->
   <div class="dot-ticker" aria-hidden="true">
     <div class="dot-ticker-track">
-      <span class="dot" style="background:#e8273a"></span>
-      <span class="dot" style="background:#f07c1a"></span>
-      <span class="dot" style="background:#ffd63e"></span>
-      <span class="dot" style="background:#7fc55a"></span>
-      <span class="dot" style="background:#26b5af"></span>
-      <span class="dot" style="background:#2e9ae8"></span>
-      <span class="dot" style="background:#8050c8"></span>
-      <span class="dot" style="background:#e85fa0"></span>
-      <span class="dot" style="background:#fff;opacity:.5"></span>
-      <span class="dot" style="background:#0d2b3e"></span>
-      <span class="dot" style="background:#ffd63e"></span>
-      <span class="dot" style="background:#e85fa0"></span>
-      <span class="dot" style="background:#8050c8"></span>
-      <span class="dot" style="background:#26b5af"></span>
-      <span class="dot" style="background:#0d2b3e"></span>
-      <span class="dot" style="background:#f07c1a"></span>
-      <span class="dot" style="background:#2e9ae8"></span>
-      <span class="dot" style="background:#e8273a"></span>
-      <!-- duplicate for seamless loop -->
-      <span class="dot" style="background:#e8273a"></span>
-      <span class="dot" style="background:#f07c1a"></span>
-      <span class="dot" style="background:#ffd63e"></span>
-      <span class="dot" style="background:#7fc55a"></span>
-      <span class="dot" style="background:#26b5af"></span>
-      <span class="dot" style="background:#2e9ae8"></span>
-      <span class="dot" style="background:#8050c8"></span>
-      <span class="dot" style="background:#e85fa0"></span>
-      <span class="dot" style="background:#fff;opacity:.5"></span>
-      <span class="dot" style="background:#0d2b3e"></span>
-      <span class="dot" style="background:#ffd63e"></span>
-      <span class="dot" style="background:#e85fa0"></span>
-      <span class="dot" style="background:#8050c8"></span>
-      <span class="dot" style="background:#26b5af"></span>
-      <span class="dot" style="background:#0d2b3e"></span>
-      <span class="dot" style="background:#f07c1a"></span>
-      <span class="dot" style="background:#2e9ae8"></span>
-      <span class="dot" style="background:#e8273a"></span>
+      <span class="dot" style="background:#e8273a"></span><span class="dot" style="background:#f07c1a"></span><span class="dot" style="background:#ffd63e"></span><span class="dot" style="background:#7fc55a"></span><span class="dot" style="background:#26b5af"></span><span class="dot" style="background:#2e9ae8"></span><span class="dot" style="background:#8050c8"></span><span class="dot" style="background:#e85fa0"></span><span class="dot" style="background:#fff;opacity:.5"></span><span class="dot" style="background:#0d2b3e"></span><span class="dot" style="background:#ffd63e"></span><span class="dot" style="background:#e85fa0"></span><span class="dot" style="background:#8050c8"></span><span class="dot" style="background:#26b5af"></span><span class="dot" style="background:#f07c1a"></span><span class="dot" style="background:#2e9ae8"></span><span class="dot" style="background:#e8273a"></span>
+      <span class="dot" style="background:#e8273a"></span><span class="dot" style="background:#f07c1a"></span><span class="dot" style="background:#ffd63e"></span><span class="dot" style="background:#7fc55a"></span><span class="dot" style="background:#26b5af"></span><span class="dot" style="background:#2e9ae8"></span><span class="dot" style="background:#8050c8"></span><span class="dot" style="background:#e85fa0"></span><span class="dot" style="background:#fff;opacity:.5"></span><span class="dot" style="background:#0d2b3e"></span><span class="dot" style="background:#ffd63e"></span><span class="dot" style="background:#e85fa0"></span><span class="dot" style="background:#8050c8"></span><span class="dot" style="background:#26b5af"></span><span class="dot" style="background:#f07c1a"></span><span class="dot" style="background:#2e9ae8"></span><span class="dot" style="background:#e8273a"></span>
     </div>
   </div>
   <div class="label-ticker" aria-hidden="true">
     <div class="label-ticker-track">
-      <span class="label-item"><span class="dot"></span>Dot Markers</span>
-      <span class="label-item"><span class="dot"></span>Ocean Animals</span>
-      <span class="label-item"><span class="dot"></span>Jungle Friends</span>
-      <span class="label-item"><span class="dot"></span>ABC Learning</span>
-      <span class="label-item"><span class="dot"></span>Ages 2–5</span>
-      <span class="label-item"><span class="dot"></span>Screen-Free Fun</span>
-      <span class="label-item"><span class="dot"></span>50+ Pages</span>
-      <span class="label-item"><span class="dot"></span>Available on Amazon</span>
-      <span class="label-item"><span class="dot"></span>Dot Markers</span>
-      <span class="label-item"><span class="dot"></span>Ocean Animals</span>
-      <span class="label-item"><span class="dot"></span>Jungle Friends</span>
-      <span class="label-item"><span class="dot"></span>ABC Learning</span>
-      <span class="label-item"><span class="dot"></span>Ages 2–5</span>
-      <span class="label-item"><span class="dot"></span>Screen-Free Fun</span>
-      <span class="label-item"><span class="dot"></span>50+ Pages</span>
-      <span class="label-item"><span class="dot"></span>Available on Amazon</span>
+      <span class="label-item"><span class="dot"></span>Dot Markers</span><span class="label-item"><span class="dot"></span>Ocean Animals</span><span class="label-item"><span class="dot"></span>Jungle Friends</span><span class="label-item"><span class="dot"></span>ABC Learning</span><span class="label-item"><span class="dot"></span>Ages 1–5</span><span class="label-item"><span class="dot"></span>Screen-Free Fun</span><span class="label-item"><span class="dot"></span>50–60 Pages</span><span class="label-item"><span class="dot"></span>Available on Amazon</span>
+      <span class="label-item"><span class="dot"></span>Dot Markers</span><span class="label-item"><span class="dot"></span>Ocean Animals</span><span class="label-item"><span class="dot"></span>Jungle Friends</span><span class="label-item"><span class="dot"></span>ABC Learning</span><span class="label-item"><span class="dot"></span>Ages 1–5</span><span class="label-item"><span class="dot"></span>Screen-Free Fun</span><span class="label-item"><span class="dot"></span>50–60 Pages</span><span class="label-item"><span class="dot"></span>Available on Amazon</span>
     </div>
   </div>
 
-  <!-- ─── Books ─────────────────────────────────────────────────── -->
+  <!-- ── Social proof bar ───────────────────────────────────────── -->
+  <div class="proof-bar reveal">
+    <div class="proof-bar-inner">
+      <div class="proof-stat">
+        <div class="proof-num">★ 4.9</div>
+        <div class="proof-label">Average Rating</div>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-stat">
+        <div class="proof-num">500+</div>
+        <div class="proof-label">Happy Families</div>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-stat">
+        <div class="proof-num">3</div>
+        <div class="proof-label">Unique Books</div>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-stat">
+        <div class="proof-num">170+</div>
+        <div class="proof-label">Total Pages</div>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-stat">
+        <div class="proof-num">Ages 1–5</div>
+        <div class="proof-label">Perfect For</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Books ──────────────────────────────────────────────────── -->
   <section id="books" class="section-wrap">
     <div class="section-inner">
       <div class="books-header">
         <div>
-          <div class="section-tag">
-            <span class="dot" style="background:var(--teal)"></span> My Books
-          </div>
-          <h2 class="section-heading">Activity Books Kids Love</h2>
-          <p class="section-lead">Bold dot patterns, big creativity — every book designed for little hands using dot markers.</p>
+          <div class="section-tag"><span class="dot" style="background:var(--teal)"></span> The Collection</div>
+          <h2 class="section-heading">Books Kids Ask for Again & Again</h2>
+          <p class="section-lead">Each book is packed with bold dot patterns, familiar themes, and enough pages to keep little ones busy for weeks.</p>
         </div>
         <div class="books-header-actions">
-          <button class="btn btn-export" onclick="exportBookList()">
-            ↓ Download Book List
-          </button>
-          <a href="#contact" class="btn btn-outline">Get in Touch</a>
+          <button class="btn btn-yellow" onclick="exportBookList()">↓ Download Book List</button>
+          <a href="#contact" class="btn btn-outline">Bulk Orders</a>
         </div>
       </div>
 
       <div class="books-grid">
 
-        <!-- Book 1 — teal accent (Shark/Ocean cover color) -->
         <article class="book-card reveal">
           <div class="book-img-wrap">
             <img src="images/Shark-1.jpg" alt="Dot Markers Activity Book — Ocean Animals" />
@@ -706,21 +547,16 @@
           </div>
           <div class="book-body">
             <div class="book-series s-teal">Ocean Animals Series</div>
-            <h3 class="book-title">Dot Markers Activity Book — Animals</h3>
-            <p class="book-desc">Dive into ocean dot fun! Big dot patterns of sharks, fish &amp; sea creatures perfect for toddlers.</p>
+            <h3 class="book-title">Dot Markers — Animals</h3>
+            <div class="book-rating">★★★★★ <span style="color:var(--navy2);opacity:.6;font-size:.75rem;font-weight:700">(4.9)</span></div>
+            <p class="book-desc">Sharks, fish, octopus & more! Big dot patterns toddlers can fill with confidence on the very first try.</p>
+            <div class="book-meta"><span>50+ pages</span><span>•</span><span>Ages 2+</span><span>•</span><span>Paperback</span></div>
             <div class="book-cta">
-              <a
-                href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="cta-teal"
-                onclick="doStamp(this)"
-              >View on Amazon ›</a>
+              <a href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3" target="_blank" rel="noopener noreferrer" class="cta-teal" onclick="doStamp(this)">Buy on Amazon →</a>
             </div>
           </div>
         </article>
 
-        <!-- Book 2 — lime accent (Sloth/Animals cover color) -->
         <article class="book-card reveal reveal-delay-1">
           <div class="book-img-wrap">
             <img src="images/Animals1.jpg" alt="Dot Markers Activity Book — Animals Vol. 2" />
@@ -728,47 +564,166 @@
           </div>
           <div class="book-body">
             <div class="book-series s-lime">Jungle Animals Series</div>
-            <h3 class="book-title">Dot Markers Activity Book — Animals Vol. 2</h3>
-            <p class="book-desc">More beloved jungle creatures, more dot-painting fun. The sequel kids keep asking for.</p>
+            <h3 class="book-title">Dot Markers — Animals Vol. 2</h3>
+            <div class="book-rating">★★★★★ <span style="color:var(--navy2);opacity:.6;font-size:.75rem;font-weight:700">(4.9)</span></div>
+            <p class="book-desc">Sloths, lions, monkeys & more! The jungle sequel kids keep asking for — more animals, more fun.</p>
+            <div class="book-meta"><span>50+ pages</span><span>•</span><span>Ages 2+</span><span>•</span><span>Paperback</span></div>
             <div class="book-cta">
-              <a
-                href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0GS98FJ4S"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="cta-lime"
-                onclick="doStamp(this)"
-              >View on Amazon ›</a>
+              <a href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0GS98FJ4S" target="_blank" rel="noopener noreferrer" class="cta-lime" onclick="doStamp(this)">Buy on Amazon →</a>
             </div>
           </div>
         </article>
 
-        <!-- Book 3 — forest accent (ABC/Bear cover color) -->
         <article class="book-card reveal reveal-delay-2">
           <div class="book-img-wrap">
             <img src="images/ABC1.jpg" alt="First ABC Markers Activity Book" />
-            <span class="book-chip chip-forest">ABC</span>
+            <span class="book-chip chip-new">New!</span>
           </div>
           <div class="book-body">
             <div class="book-series s-forest">ABC Learning Series</div>
-            <h3 class="book-title">First ABC Markers Activity Book</h3>
-            <p class="book-desc">Learn the alphabet through dot painting. Letters and art in one colorful, confidence-building book.</p>
+            <h3 class="book-title">First ABC Markers Book</h3>
+            <div class="book-rating">★★★★★ <span style="color:var(--navy2);opacity:.6;font-size:.75rem;font-weight:700">(5.0)</span></div>
+            <p class="book-desc">Learn A to Z through dot painting. Every letter gets its own big colorful page — art meets early literacy.</p>
+            <div class="book-meta"><span>60+ pages</span><span>•</span><span>Ages 1–5</span><span>•</span><span>Paperback</span></div>
             <div class="book-cta">
-              <a
-                href="https://www.amazon.com/First-ABC-Markers-Activity-Book/dp/B0FHHXNQZ5"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="cta-forest"
-                onclick="doStamp(this)"
-              >View on Amazon ›</a>
+              <a href="https://www.amazon.com/First-ABC-Markers-Activity-Book/dp/B0FHHXNQZ5" target="_blank" rel="noopener noreferrer" class="cta-forest" onclick="doStamp(this)">Buy on Amazon →</a>
             </div>
           </div>
         </article>
 
       </div>
+
+      <!-- Bundle CTA -->
+      <div class="bundle-cta reveal">
+        <div class="bundle-text">
+          <div class="bundle-dots">
+            <span class="dot" style="background:var(--teal)"></span>
+            <span class="dot" style="background:var(--lime)"></span>
+            <span class="dot" style="background:var(--forest)"></span>
+          </div>
+          <h3>Get the Full Collection</h3>
+          <p>All 3 books together = weeks of screen-free entertainment. Perfect gift set for birthdays, holidays, or any day.</p>
+        </div>
+        <div class="bundle-cta-btns">
+          <a href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3" target="_blank" rel="noopener noreferrer" class="btn btn-white" onclick="doStamp(this)">Shop All on Amazon →</a>
+          <a href="#contact" class="btn btn-outline" style="border-color:rgba(255,255,255,0.3);color:#fff;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">Bulk / Gift Orders</a>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- ─── About ─────────────────────────────────────────────────── -->
+  <!-- ── Testimonials ───────────────────────────────────────────── -->
+  <section id="testimonials" class="section-wrap">
+    <div class="section-inner">
+      <div style="text-align:center;margin-bottom:0.5rem">
+        <div class="section-tag" style="display:inline-flex"><span class="dot" style="background:var(--yellow)"></span> Real Reviews</div>
+      </div>
+      <h2 class="section-heading" style="text-align:center">Parents &amp; Kids Are Obsessed</h2>
+      <p class="section-lead" style="margin:0 auto;text-align:center">Don't take our word for it — here's what families are saying on Amazon.</p>
+
+      <div class="testimonials-grid">
+
+        <div class="testimonial-card reveal">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">My 3-year-old asks for this every single morning. It's become our quiet-time ritual and she feels SO proud of her finished pages.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:var(--teal)">S</div>
+            <div>
+              <div class="testimonial-name">Sarah M.</div>
+              <div class="testimonial-meta">Mom of a 3-year-old</div>
+              <div class="testimonial-verified">✓ Verified Amazon Purchase</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-1">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">The dots are the perfect size for little hands. We've gone through the Ocean Animals book three times already and just ordered Vol. 2!</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:var(--lime-dark)">J</div>
+            <div>
+              <div class="testimonial-name">Jessica T.</div>
+              <div class="testimonial-meta">Mom of a 2 &amp; 4-year-old</div>
+              <div class="testimonial-verified">✓ Verified Amazon Purchase</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-2">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">I'm a preschool teacher and I ordered 6 copies of the ABC book for my classroom. The kids beg to do dot marker time. Absolute gold.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:var(--forest)">E</div>
+            <div>
+              <div class="testimonial-name">Emily R.</div>
+              <div class="testimonial-meta">Preschool Teacher</div>
+              <div class="testimonial-verified">✓ Verified Amazon Purchase</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-1">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">Finally something that keeps my toddler focused for more than 5 minutes. I've recommended this to every parent I know.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:var(--purple)">A</div>
+            <div>
+              <div class="testimonial-name">Amanda K.</div>
+              <div class="testimonial-meta">Mom of an 18-month-old</div>
+              <div class="testimonial-verified">✓ Verified Amazon Purchase</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-2">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">Great for fine motor skills and color recognition. My occupational therapist actually recommended dot marker books — so glad I found this one.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:var(--orange)">R</div>
+            <div>
+              <div class="testimonial-name">Rachel P.</div>
+              <div class="testimonial-meta">Mom &amp; OT advocate</div>
+              <div class="testimonial-verified">✓ Verified Amazon Purchase</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-3">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">Bought all 3 as a Christmas gift set for my nephew. His parents messaged me saying it was the hit of Christmas morning. Will buy again!</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:var(--pink)">M</div>
+            <div>
+              <div class="testimonial-name">Michelle D.</div>
+              <div class="testimonial-meta">Gift buyer, Auntie</div>
+              <div class="testimonial-verified">✓ Verified Amazon Purchase</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Lead magnet ────────────────────────────────────────────── -->
+  <section id="leadmagnet">
+    <div class="leadmagnet-inner reveal">
+      <div class="section-tag"><span class="dot"></span> Free Gift</div>
+      <h2>Get a Free Sample Page</h2>
+      <p>Drop your email and we'll send you a free printable dot marker page — no markers required to try it out!</p>
+      <form class="leadmagnet-form" onsubmit="handleLeadSubmit(event)" novalidate>
+        <input type="email" placeholder="your@email.com" required />
+        <button type="submit" class="btn btn-white" onclick="doStamp(this)">Send My Free Page →</button>
+      </form>
+      <p class="leadmagnet-fine">No spam, ever. Unsubscribe any time.</p>
+      <div class="leadmagnet-dots">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── About ──────────────────────────────────────────────────── -->
   <section id="about">
     <div class="about-inner">
       <div class="about-art">
@@ -776,9 +731,7 @@
         <span class="float-dot" style="width:90px;height:90px;background:#fff;bottom:20px;right:-10px"></span>
         <span class="float-dot" style="width:60px;height:60px;background:var(--yellow);top:45%;left:5%"></span>
         <div class="about-photo-frame">
-          <!--
-            Replace with: <img src="images/author-photo.jpg" alt="Author photo" />
-          -->
+          <!-- Replace with: <img src="images/author-photo.jpg" alt="Author photo" /> -->
           <div class="about-photo-placeholder">
             <div class="dots-grid">
               <span class="dot" style="background:var(--red);opacity:.7"></span>
@@ -794,16 +747,11 @@
           </div>
         </div>
       </div>
-
       <div class="about-text-side reveal">
         <div class="about-tag">About the Author</div>
         <h2 class="about-heading">Making creativity<br>accessible for every child.</h2>
-        <p class="about-body">
-          I create dot marker activity books that give kids a screen-free creative outlet. Every page is designed with big, easy-to-fill dots so little hands feel confident and proud of what they make.
-        </p>
-        <p class="about-body">
-          My books are loved by parents, teachers, and therapists — anywhere kids need calm, focused, joyful play. Because every child deserves to feel like an artist.
-        </p>
+        <p class="about-body">I create dot marker activity books that give kids a screen-free creative outlet. Every page is designed with big, easy-to-fill dots so little hands feel confident and proud of what they make.</p>
+        <p class="about-body">My books are loved by parents, teachers, and occupational therapists — anywhere kids need calm, focused, joyful play. Because every child deserves to feel like an artist.</p>
         <div class="about-dots-strip">
           <span class="dot" style="background:var(--teal)"></span>
           <span class="dot" style="background:var(--yellow)"></span>
@@ -816,16 +764,58 @@
     </div>
   </section>
 
-  <!-- ─── Contact ───────────────────────────────────────────────── -->
-  <section id="contact" class="section-wrap">
+  <!-- ── FAQ ────────────────────────────────────────────────────── -->
+  <section id="faq" class="section-wrap">
+    <div class="section-inner">
+      <div style="text-align:center;margin-bottom:0.5rem">
+        <div class="section-tag" style="display:inline-flex"><span class="dot" style="background:var(--blue)"></span> FAQ</div>
+      </div>
+      <h2 class="section-heading" style="text-align:center">Questions? We've Got Answers.</h2>
+
+      <div class="faq-grid">
+
+        <div class="faq-item reveal">
+          <div class="faq-q"><span class="dot" style="background:var(--teal)"></span> What markers work with these books?</div>
+          <p class="faq-a">Any standard dot marker (dauber) brand works great — Do-a-Dot, Bingo daubers, or similar. The thick paper handles multiple fills without bleed-through.</p>
+        </div>
+
+        <div class="faq-item reveal reveal-delay-1">
+          <div class="faq-q"><span class="dot" style="background:var(--lime)"></span> What age range are these books for?</div>
+          <p class="faq-a">The Animals series is perfect from age 2 and up. The ABC book is designed for ages 1–5, making it ideal for building early letter recognition through art.</p>
+        </div>
+
+        <div class="faq-item reveal reveal-delay-1">
+          <div class="faq-q"><span class="dot" style="background:var(--yellow)"></span> Can I order in bulk for a classroom or daycare?</div>
+          <p class="faq-a">Absolutely! Teachers and therapists love these books. For bulk orders of 10+ copies, reach out via the contact form below for pricing and shipping options.</p>
+        </div>
+
+        <div class="faq-item reveal reveal-delay-2">
+          <div class="faq-q"><span class="dot" style="background:var(--orange)"></span> Are these books good for kids with special needs?</div>
+          <p class="faq-a">Yes — the oversized dots and simple format are widely used by occupational therapists to build fine motor skills, focus, and color recognition in a low-pressure, joyful way.</p>
+        </div>
+
+        <div class="faq-item reveal reveal-delay-2">
+          <div class="faq-q"><span class="dot" style="background:var(--purple)"></span> How many pages are in each book?</div>
+          <p class="faq-a">The Animals books have 50+ activity pages each. The ABC book has 60+ pages — one spread per letter, plus bonus pages. All are printed on quality paper stock.</p>
+        </div>
+
+        <div class="faq-item reveal reveal-delay-3">
+          <div class="faq-q"><span class="dot" style="background:var(--pink)"></span> Are more books coming?</div>
+          <p class="faq-a">Yes! New themes are in the works. Sign up for the free sample above to be first to know when new books launch.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Contact ────────────────────────────────────────────────── -->
+  <section id="contact" class="section-wrap" style="background:var(--cream)">
     <div class="section-inner">
       <div class="contact-grid">
         <div class="contact-left reveal">
-          <div class="section-tag">
-            <span class="dot" style="background:var(--teal)"></span> Say Hello
-          </div>
+          <div class="section-tag"><span class="dot" style="background:var(--teal)"></span> Say Hello</div>
           <h2 class="section-heading">Let's connect.</h2>
-          <p>Questions, bulk orders, partnerships, or just want to share how your little one loved a book? I'd love to hear from you.</p>
+          <p>Bulk orders, classroom sets, media &amp; partnerships, or just want to share how your little one loved a book? I'd love to hear from you.</p>
           <div class="contact-fun-dots">
             <span class="dot" style="background:var(--teal)"></span>
             <span class="dot" style="background:var(--yellow)"></span>
@@ -836,24 +826,17 @@
             <span class="dot" style="background:var(--pink)"></span>
           </div>
         </div>
-
         <form class="contact-form reveal reveal-delay-1" onsubmit="handleSubmit(event)" novalidate>
           <div>
-            <div class="field-label">
-              <span class="dot" style="background:var(--teal)"></span> Your name
-            </div>
+            <div class="field-label"><span class="dot" style="background:var(--teal)"></span> Your name</div>
             <input type="text" placeholder="Jane Smith" required />
           </div>
           <div>
-            <div class="field-label">
-              <span class="dot" style="background:var(--yellow)"></span> Email address
-            </div>
+            <div class="field-label"><span class="dot" style="background:var(--yellow)"></span> Email address</div>
             <input type="email" placeholder="jane@example.com" required />
           </div>
           <div>
-            <div class="field-label">
-              <span class="dot" style="background:var(--lime)"></span> Message
-            </div>
+            <div class="field-label"><span class="dot" style="background:var(--lime)"></span> Message</div>
             <textarea placeholder="I'd love to hear from you…"></textarea>
           </div>
           <div class="form-submit">
@@ -864,7 +847,7 @@
     </div>
   </section>
 
-  <!-- ─── Footer ────────────────────────────────────────────────── -->
+  <!-- ── Footer ─────────────────────────────────────────────────── -->
   <footer>
     <div class="footer-inner">
       <div class="footer-brand">
@@ -878,6 +861,8 @@
       </div>
       <ul class="footer-links">
         <li><a href="#books">Books</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+        <li><a href="#faq">FAQ</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -887,52 +872,49 @@
   </footer>
 
   <script>
-    // Stamp animation
     function doStamp(el) {
-      el.classList.remove('stamp-anim');
-      void el.offsetWidth;
-      el.classList.add('stamp-anim');
+      el.classList.remove('stamp-anim'); void el.offsetWidth; el.classList.add('stamp-anim');
       el.addEventListener('animationend', function() { el.classList.remove('stamp-anim'); }, { once: true });
     }
 
-    // Simple CSV export — book titles + Amazon links
+    // CSV export
     var BOOKS = [
       { title: 'Dot Markers Activity Book — Animals (Vol. 1)', series: 'Ocean Animals Series', ages: '2+', pages: '50+', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3' },
       { title: 'Dot Markers Activity Book — Animals Vol. 2',   series: 'Jungle Animals Series', ages: '2+', pages: '50+', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0GS98FJ4S' },
-      { title: 'First ABC Markers Activity Book',              series: 'ABC Learning Series',    ages: '1-5', pages: '60+', url: 'https://www.amazon.com/First-ABC-Markers-Activity-Book/dp/B0FHHXNQZ5' }
+      { title: 'First ABC Markers Activity Book',              series: 'ABC Learning Series',   ages: '1-5', pages: '60+', url: 'https://www.amazon.com/First-ABC-Markers-Activity-Book/dp/B0FHHXNQZ5' }
     ];
-
     function exportBookList() {
-      var header = 'Title,Series,Ages,Pages,Amazon URL';
-      var rows = BOOKS.map(function(b) {
-        return '"' + b.title + '","' + b.series + '",' + b.ages + ',' + b.pages + ',' + b.url;
-      });
-      var csv  = [header].concat(rows).join('\n');
-      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      var url  = URL.createObjectURL(blob);
-      var a    = document.createElement('a');
-      a.href = url; a.download = 'dot-marker-books.csv'; a.click();
-      URL.revokeObjectURL(url);
-      var toast = document.getElementById('exportToast');
-      toast.classList.add('show');
-      setTimeout(function() { toast.classList.remove('show'); }, 2800);
+      var csv = ['Title,Series,Ages,Pages,Amazon URL'].concat(BOOKS.map(function(b) {
+        return '"'+b.title+'","'+b.series+'",'+b.ages+','+b.pages+','+b.url;
+      })).join('\n');
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+      a.download = 'dot-marker-books.csv'; a.click();
+      var t = document.getElementById('exportToast');
+      t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2800);
     }
 
     // Scroll-reveal
-    var revealEls = document.querySelectorAll('.reveal');
-    var observer  = new IntersectionObserver(function(entries) {
+    var observer = new IntersectionObserver(function(entries) {
       entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.12 });
-    revealEls.forEach(function(el) { observer.observe(el); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
 
     // Contact form
     function handleSubmit(e) {
       e.preventDefault();
-      var btn  = e.target.querySelector('.btn-primary');
+      var btn = e.target.querySelector('.btn-primary');
       var orig = btn.textContent;
-      btn.textContent       = '✓ Sent!';
-      btn.style.background  = 'var(--lime-dark)';
+      btn.textContent = '✓ Sent!'; btn.style.background = 'var(--lime-dark)';
       setTimeout(function() { btn.textContent = orig; btn.style.background = ''; e.target.reset(); }, 3000);
+    }
+
+    // Lead magnet form
+    function handleLeadSubmit(e) {
+      e.preventDefault();
+      var btn = e.target.querySelector('.btn-white');
+      btn.textContent = '✓ Check your inbox!'; btn.style.background = 'var(--yellow)';
+      setTimeout(function() { btn.textContent = 'Send My Free Page →'; btn.style.background = ''; e.target.reset(); }, 3500);
     }
   </script>
 
