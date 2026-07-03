@@ -232,7 +232,7 @@
     .book-title { font-family: 'Luckiest Guy', cursive; font-size: 1.1rem; color: var(--navy); line-height: 1.25; letter-spacing: 0.02em; }
     .book-desc  { font-size: 0.875rem; color: var(--navy2); opacity: 0.75; flex: 1; }
     .book-meta  { display: flex; gap: 0.75rem; font-size: 0.75rem; font-weight: 700; color: var(--navy2); opacity: 0.5; }
-    .book-cta   { margin-top: 0.75rem; }
+    .book-cta   { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
     .book-cta a {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       padding: 0.7rem 1rem; border-radius: 10px;
@@ -243,6 +243,7 @@
     .cta-teal   { background: var(--teal); }
     .cta-lime   { background: var(--lime-dark); }
     .cta-forest { background: var(--forest); }
+    .cta-etsy   { background: #f1641e; }
 
     /* Bundle CTA */
     .bundle-cta {
@@ -553,6 +554,7 @@
             <div class="book-meta"><span>50+ pages</span><span>•</span><span>Ages 2+</span><span>•</span><span>Paperback</span></div>
             <div class="book-cta">
               <a href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3" target="_blank" rel="noopener noreferrer" class="cta-teal" onclick="doStamp(this)">Buy on Amazon →</a>
+              <a href="https://www.etsy.com/listing/4530506313/animal-dot-marker-activity-book-50" target="_blank" rel="noopener noreferrer" class="cta-etsy" onclick="doStamp(this)">Buy on Etsy →</a>
             </div>
           </div>
         </article>
