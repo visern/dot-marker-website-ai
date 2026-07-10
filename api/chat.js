@@ -11,6 +11,62 @@ const TOP_K = 4;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_HISTORY_TURNS = 6;
 
+// Accepts either a Vercel KV store or a raw Upstash Redis integration —
+// both expose the same REST URL/token shape, just under different env var names.
+const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const REDIS_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 10;
+
+function getClientIp(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded.length) {
+    return forwarded.split(',')[0].trim();
+  }
+  return req.socket && req.socket.remoteAddress ? req.socket.remoteAddress : 'unknown';
+}
+
+// Sliding-window counter per IP, backed by a Redis sorted set: each request
+// adds a timestamped entry, old entries fall out of the window, and we cap
+// how many entries can exist within the window. Fails open (allows the
+// request) if Redis isn't configured or errors, so a missing/broken rate
+// limiter never takes the chat widget down — it's a crude backstop against
+// scripted abuse, not a hard guarantee.
+async function checkRateLimit(ip) {
+  if (!REDIS_URL || !REDIS_TOKEN) return true;
+
+  const now = Date.now();
+  const windowStart = now - RATE_LIMIT_WINDOW_MS;
+  const key = `ratelimit:chat:${ip}`;
+  const member = `${now}-${Math.random().toString(36).slice(2)}`;
+
+  try {
+    const res = await fetch(`${REDIS_URL}/pipeline`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${REDIS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify([
+        ['ZREMRANGEBYSCORE', key, 0, windowStart],
+        ['ZADD', key, now, member],
+        ['ZCARD', key],
+        ['EXPIRE', key, Math.ceil(RATE_LIMIT_WINDOW_MS / 1000)],
+      ]),
+    });
+    if (!res.ok) {
+      console.error(`Rate limit check failed: ${res.status} ${await res.text()}`);
+      return true;
+    }
+    const results = await res.json();
+    const count = results[2] && results[2].result;
+    return typeof count !== 'number' || count <= RATE_LIMIT_MAX_REQUESTS;
+  } catch (err) {
+    console.error('Rate limit check errored:', err);
+    return true;
+  }
+}
+
 let cachedRecords = null;
 function loadRecords() {
   if (!cachedRecords) {
@@ -121,6 +177,12 @@ module.exports = async (req, res) => {
   }
   if (message.length > MAX_MESSAGE_LENGTH) {
     res.status(400).json({ error: 'Message is too long.' });
+    return;
+  }
+
+  const allowed = await checkRateLimit(getClientIp(req));
+  if (!allowed) {
+    res.status(429).json({ error: 'Too many messages. Please wait a moment and try again.' });
     return;
   }
 

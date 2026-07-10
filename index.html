@@ -1087,13 +1087,15 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: text, history: history }),
         })
-          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; }); })
           .then(function (result) {
             thinking.remove();
             if (result.ok && result.data.reply) {
               addMessage(result.data.reply, 'bot');
               history.push({ role: 'user', text: text });
               history.push({ role: 'assistant', text: result.data.reply });
+            } else if (result.status === 429) {
+              addMessage("You're sending messages a bit fast — please wait a moment and try again.", 'bot', true);
             } else {
               addMessage("Sorry, I couldn't get an answer just now. Please try again or use the contact form below.", 'bot', true);
             }

@@ -16,6 +16,10 @@ widget that answers visitor questions using the site's own content.
   `functions.includeFiles`, since the file path is built at runtime and Vercel's automatic
   bundler can't always detect it.
 - The chat widget (bottom-right bubble) is inlined in `index.html` and calls `/api/chat`.
+- Per-IP rate limiting: `/api/chat` caps each IP to 10 messages/minute using a sliding-window
+  counter in Redis (see below). This is a crude backstop against scripted abuse of the free
+  Gemini quota, not a hard guarantee — if Redis isn't configured, rate limiting is skipped
+  and the endpoint still works (fails open).
 
 ## One-time setup
 
@@ -23,9 +27,13 @@ widget that answers visitor questions using the site's own content.
 2. In the Vercel project settings, add `GEMINI_API_KEY` as an environment variable for
    **Production, Preview, and Development** — it's needed at build time (ingestion) and
    at request time (query embedding + generation).
-3. Deploy (or redeploy). The build runs `npm run ingest` automatically, producing
+3. Recommended: add the **Upstash Redis** integration from the Vercel Marketplace
+   (free tier is plenty) so `/api/chat` has rate limiting. Vercel wires up the
+   `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` env vars automatically —
+   no code changes needed. A Vercel KV store works the same way.
+4. Deploy (or redeploy). The build runs `npm run ingest` automatically, producing
    `data/embeddings.json` for that deployment.
-4. Test the chat bubble on the live site.
+5. Test the chat bubble on the live site.
 
 For local development, copy `.env.example` to `.env`, fill in the key, and run
 `npm run ingest` to generate a local `data/embeddings.json`.
