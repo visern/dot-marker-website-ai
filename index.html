@@ -419,6 +419,52 @@
       .nav-links li:not(.nav-cta) { display: none; }
     }
     @media (max-width: 600px) { .section-wrap { padding: 4rem 1.25rem; } }
+
+    /* ── Chat widget ──────────────────────────────────────────── */
+    #chatToggle {
+      position: fixed; bottom: 22px; right: 22px; z-index: 500;
+      width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer;
+      background: var(--teal); color: #fff; font-size: 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 20px rgba(13,43,62,0.25); transition: transform 0.15s, background 0.2s;
+    }
+    #chatToggle:hover { background: var(--teal-dark); transform: translateY(-2px); }
+    #chatPanel {
+      position: fixed; bottom: 96px; right: 22px; z-index: 500;
+      width: min(360px, calc(100vw - 2.5rem)); height: min(520px, calc(100vh - 140px));
+      background: var(--white); border-radius: 18px; overflow: hidden;
+      box-shadow: 0 16px 48px rgba(13,43,62,0.28);
+      display: none; flex-direction: column; border: 1.5px solid rgba(38,181,175,0.15);
+    }
+    #chatPanel.open { display: flex; }
+    .chat-header {
+      background: var(--navy); color: #fff; padding: 1rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: 'Luckiest Guy', cursive; letter-spacing: 0.02em; font-size: 1rem;
+    }
+    .chat-header button { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 1.1rem; cursor: pointer; }
+    .chat-header button:hover { color: #fff; }
+    #chatMessages { flex: 1; overflow-y: auto; padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.6rem; background: var(--cream); }
+    .chat-msg { font-size: 0.875rem; line-height: 1.5; padding: 0.6rem 0.9rem; border-radius: 12px; max-width: 85%; }
+    .chat-msg.user { align-self: flex-end; background: var(--teal); color: #fff; border-bottom-right-radius: 4px; }
+    .chat-msg.bot { align-self: flex-start; background: #fff; color: var(--navy); border: 1px solid rgba(38,181,175,0.15); border-bottom-left-radius: 4px; }
+    .chat-msg.bot.error { color: var(--red-dark); }
+    .chat-form { display: flex; gap: 0.5rem; padding: 0.75rem; border-top: 1.5px solid rgba(38,181,175,0.1); background: #fff; }
+    .chat-form input {
+      flex: 1; padding: 0.6rem 0.9rem; border: 2px solid rgba(38,181,175,0.15); border-radius: 100px;
+      font-family: 'Baloo 2', sans-serif; font-size: 0.875rem; color: var(--navy); background: var(--cream); outline: none;
+    }
+    .chat-form input:focus { border-color: var(--teal); }
+    .chat-form button {
+      background: var(--teal); color: #fff; border: none; border-radius: 100px; width: 40px; height: 40px;
+      cursor: pointer; font-size: 1rem; flex-shrink: 0; transition: background 0.2s;
+    }
+    .chat-form button:hover { background: var(--teal-dark); }
+    .chat-form button:disabled { opacity: 0.5; cursor: default; }
+    @media (max-width: 480px) {
+      #chatPanel { right: 12px; bottom: 88px; }
+      #chatToggle { right: 12px; bottom: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -967,6 +1013,103 @@
         }
       });
     });
+  </script>
+
+  <!-- ── Chat widget ─────────────────────────────────────────────── -->
+  <button id="chatToggle" aria-label="Open chat" aria-expanded="false">💬</button>
+  <div id="chatPanel" role="dialog" aria-label="Dot Marker Books chat">
+    <div class="chat-header">
+      <span>Ask about our books</span>
+      <button id="chatClose" aria-label="Close chat">✕</button>
+    </div>
+    <div id="chatMessages"></div>
+    <form class="chat-form" id="chatForm">
+      <input id="chatInput" type="text" placeholder="Ask a question…" maxlength="500" autocomplete="off" required />
+      <button type="submit" id="chatSend" aria-label="Send">→</button>
+    </form>
+  </div>
+
+  <script>
+    (function () {
+      var messagesEl = document.getElementById('chatMessages');
+      var formEl = document.getElementById('chatForm');
+      var inputEl = document.getElementById('chatInput');
+      var sendBtn = document.getElementById('chatSend');
+      var toggleBtn = document.getElementById('chatToggle');
+      var panelEl = document.getElementById('chatPanel');
+      var closeBtn = document.getElementById('chatClose');
+      var history = [];
+      var greeted = false;
+
+      function addMessage(text, role, isError) {
+        var div = document.createElement('div');
+        div.className = 'chat-msg ' + role + (isError ? ' error' : '');
+        div.textContent = text;
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return div;
+      }
+
+      function openPanel() {
+        panelEl.classList.add('open');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        if (!greeted) {
+          addMessage("Hi! I'm here to help with questions about our dot marker books — ages, pages, bulk orders, and more. What would you like to know?", 'bot');
+          greeted = true;
+        }
+        inputEl.focus();
+        if (window.posthog) posthog.capture('chat_opened');
+      }
+
+      function closePanel() {
+        panelEl.classList.remove('open');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      toggleBtn.addEventListener('click', function () {
+        panelEl.classList.contains('open') ? closePanel() : openPanel();
+      });
+      closeBtn.addEventListener('click', closePanel);
+
+      formEl.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var text = inputEl.value.trim();
+        if (!text) return;
+
+        addMessage(text, 'user');
+        inputEl.value = '';
+        inputEl.disabled = true;
+        sendBtn.disabled = true;
+        var thinking = addMessage('…', 'bot');
+
+        fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, history: history }),
+        })
+          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+          .then(function (result) {
+            thinking.remove();
+            if (result.ok && result.data.reply) {
+              addMessage(result.data.reply, 'bot');
+              history.push({ role: 'user', text: text });
+              history.push({ role: 'assistant', text: result.data.reply });
+            } else {
+              addMessage("Sorry, I couldn't get an answer just now. Please try again or use the contact form below.", 'bot', true);
+            }
+            if (window.posthog) posthog.capture('chat_message_sent');
+          })
+          .catch(function () {
+            thinking.remove();
+            addMessage("Sorry, something went wrong. Please try again or use the contact form below.", 'bot', true);
+          })
+          .finally(function () {
+            inputEl.disabled = false;
+            sendBtn.disabled = false;
+            inputEl.focus();
+          });
+      });
+    })();
   </script>
 
   <!-- Vercel Web Analytics -->

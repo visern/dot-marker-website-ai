@@ -1,0 +1,12 @@
+{
+  "name": "dot-marker-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dot Marker Books website with a RAG chat widget",
+  "scripts": {
+    "ingest": "node scripts/ingest.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
