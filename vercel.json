@@ -1,4 +1,10 @@
 {
   "outputDirectory": ".",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "buildCommand": "npm run ingest",
+  "functions": {
+    "api/chat.js": {
+      "includeFiles": "data/**"
+    }
+  }
 }
