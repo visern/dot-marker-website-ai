@@ -6,16 +6,16 @@ const fs = require('fs');
 const path = require('path');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_EMBED_MODEL = 'text-embedding-004';
+const GEMINI_EMBED_MODEL = 'gemini-embedding-001';
 
 const KNOWLEDGE_PATH = path.join(__dirname, '..', 'content', 'knowledge.json');
 const OUTPUT_PATH = path.join(__dirname, '..', 'data', 'embeddings.json');
 
 async function embedBatch(texts) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_EMBED_MODEL}:batchEmbedContents?key=${GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_EMBED_MODEL}:batchEmbedContents`;
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
     body: JSON.stringify({
       requests: texts.map((text) => ({
         model: `models/${GEMINI_EMBED_MODEL}`,

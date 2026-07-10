@@ -5,8 +5,11 @@ const fs = require('fs');
 const path = require('path');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_EMBED_MODEL = 'text-embedding-004';
-const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-2.0-flash';
+const GEMINI_EMBED_MODEL = 'gemini-embedding-001';
+// gemini-2.0-flash was retired 2026-06-01; gemini-2.5-flash is current but is
+// itself slated to sunset 2026-10-16 — check ai.google.dev/gemini-api/docs/deprecations
+// if this endpoint starts 404ing again after that date.
+const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
 const TOP_K = 4;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_HISTORY_TURNS = 6;
@@ -90,10 +93,10 @@ function cosineSimilarity(a, b) {
 }
 
 async function embedQuery(text) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_EMBED_MODEL}:embedContent?key=${GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_EMBED_MODEL}:embedContent`;
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
     body: JSON.stringify({
       model: `models/${GEMINI_EMBED_MODEL}`,
       content: { parts: [{ text }] },
@@ -140,10 +143,10 @@ async function callGemini(message, history, context) {
     },
   ];
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_CHAT_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_CHAT_MODEL}:generateContent`;
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
       contents,

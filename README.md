@@ -6,15 +6,20 @@ widget that answers visitor questions using the site's own content.
 ## How the chat works
 
 - `content/knowledge.json` — source content, chunked by topic (books, FAQ, about, contact, ...).
-- `scripts/ingest.js` — embeds each chunk with the Gemini API (`text-embedding-004`) and
+- `scripts/ingest.js` — embeds each chunk with the Gemini API (`gemini-embedding-001`) and
   writes `data/embeddings.json`. This runs automatically on every Vercel build
   (`vercel.json` → `buildCommand`), so the vector store is always regenerated fresh from
   `content/knowledge.json` — it is **not** committed to git (see `.gitignore`).
 - `api/chat.js` — Vercel serverless function: embeds the visitor's question, finds the
-  most relevant chunks (cosine similarity), and asks Gemini (`gemini-2.0-flash`) to answer
+  most relevant chunks (cosine similarity), and asks Gemini (`gemini-2.5-flash`) to answer
   using only that context. `vercel.json` explicitly bundles `data/**` into this function via
   `functions.includeFiles`, since the file path is built at runtime and Vercel's automatic
   bundler can't always detect it.
+- **Model lifecycle note**: Google retires Gemini model IDs on a rolling basis (e.g.
+  `gemini-2.0-flash` and `text-embedding-004` were both already retired by the time this
+  was written). If ingestion or chat starts returning 404s, check
+  https://ai.google.dev/gemini-api/docs/deprecations and bump `GEMINI_CHAT_MODEL` /
+  the embed model constant in `api/chat.js` and `scripts/ingest.js`.
 - The chat widget (bottom-right bubble) is inlined in `index.html` and calls `/api/chat`.
 - Per-IP rate limiting: `/api/chat` caps each IP to 10 messages/minute using a sliding-window
   counter in Redis (see below). This is a crude backstop against scripted abuse of the free
