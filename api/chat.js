@@ -4,10 +4,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const VOYAGE_API_KEY = process.env.VOYAGE_API_KEY;
-const VOYAGE_MODEL = 'voyage-3-lite';
-const CLAUDE_MODEL = process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_EMBED_MODEL = 'text-embedding-004';
+const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-2.0-flash';
 const TOP_K = 4;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_HISTORY_TURNS = 6;
@@ -35,23 +34,21 @@ function cosineSimilarity(a, b) {
 }
 
 async function embedQuery(text) {
-  const res = await fetch('https://api.voyageai.com/v1/embeddings', {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_EMBED_MODEL}:embedContent?key=${GEMINI_API_KEY}`;
+  const res = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${VOYAGE_API_KEY}`,
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      input: [text],
-      model: VOYAGE_MODEL,
-      input_type: 'query',
+      model: `models/${GEMINI_EMBED_MODEL}`,
+      content: { parts: [{ text }] },
+      taskType: 'RETRIEVAL_QUERY',
     }),
   });
   if (!res.ok) {
-    throw new Error(`Voyage API error ${res.status}: ${await res.text()}`);
+    throw new Error(`Gemini API error ${res.status}: ${await res.text()}`);
   }
   const data = await res.json();
-  return data.data[0].embedding;
+  return data.embedding.values;
 }
 
 function retrieveContext(queryEmbedding, records) {
@@ -71,38 +68,40 @@ Answer ONLY using the "Context" provided below each user question. The context c
 - When relevant, mention the specific book title and a purchase link from the context.
 - Do not answer questions unrelated to Dot Marker Books, its products, or this website.`;
 
-async function callClaude(message, history, context) {
+async function callGemini(message, history, context) {
   const contextBlock = context
     .map((c) => `### ${c.title}\n${c.text}`)
     .join('\n\n');
 
-  const messages = [
-    ...history,
+  const contents = [
+    ...history.map((m) => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }],
+    })),
     {
       role: 'user',
-      content: `Context:\n${contextBlock}\n\nQuestion: ${message}`,
+      parts: [{ text: `Context:\n${contextBlock}\n\nQuestion: ${message}` }],
     },
   ];
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_CHAT_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+  const res = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: CLAUDE_MODEL,
-      max_tokens: 400,
-      system: SYSTEM_PROMPT,
-      messages,
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents,
+      generationConfig: { maxOutputTokens: 400 },
     }),
   });
   if (!res.ok) {
-    throw new Error(`Anthropic API error ${res.status}: ${await res.text()}`);
+    throw new Error(`Gemini API error ${res.status}: ${await res.text()}`);
   }
   const data = await res.json();
-  return data.content.map((block) => block.text || '').join('').trim();
+  const parts = data.candidates && data.candidates[0] && data.candidates[0].content
+    ? data.candidates[0].content.parts
+    : [];
+  return parts.map((p) => p.text || '').join('').trim();
 }
 
 module.exports = async (req, res) => {
@@ -110,7 +109,7 @@ module.exports = async (req, res) => {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
-  if (!ANTHROPIC_API_KEY || !VOYAGE_API_KEY) {
+  if (!GEMINI_API_KEY) {
     res.status(500).json({ error: 'Server is missing API credentials.' });
     return;
   }
@@ -136,7 +135,7 @@ module.exports = async (req, res) => {
     const records = loadRecords();
     const queryEmbedding = await embedQuery(message);
     const context = retrieveContext(queryEmbedding, records);
-    const reply = await callClaude(message, safeHistory, context);
+    const reply = await callGemini(message, safeHistory, context);
     res.status(200).json({ reply });
   } catch (err) {
     console.error(err);
