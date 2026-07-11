@@ -1,0 +1,53 @@
+[
+  {
+    "id": "abc",
+    "title": "Dot Markers — ABC",
+    "series": "ABC Learning Series",
+    "description": "Big easy dots, alphabet fun! Learn A to Z through dot painting — every letter gets its own bold, colorful page.",
+    "minimum_age": 1,
+    "maximum_age": 5,
+    "pages": 60,
+    "language": "English",
+    "themes": ["alphabet", "letters", "learning"],
+    "amazon_url": "https://www.amazon.com/dp/B0H7RPKQWG",
+    "etsy_url": null,
+    "image_url": "images/ABC1.png",
+    "rating": null,
+    "review_count": 0,
+    "available": true
+  },
+  {
+    "id": "animals",
+    "title": "Dot Markers — Animals",
+    "series": "Ocean Animals Series",
+    "description": "Sharks, fish, octopus & more! Big dot patterns toddlers can fill with confidence on the very first try.",
+    "minimum_age": 2,
+    "maximum_age": null,
+    "pages": 50,
+    "language": "English",
+    "themes": ["ocean", "sea animals", "dot marker"],
+    "amazon_url": "https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3",
+    "etsy_url": null,
+    "image_url": "images/Shark-1.jpg",
+    "rating": 4.6,
+    "review_count": 11,
+    "available": true
+  },
+  {
+    "id": "jungle",
+    "title": "Dot Markers — Animals Vol. 2",
+    "series": "Jungle Animals Series",
+    "description": "Sloths, lions, monkeys & more! The jungle sequel kids keep asking for — more animals, more fun.",
+    "minimum_age": 2,
+    "maximum_age": null,
+    "pages": 50,
+    "language": "English",
+    "themes": ["jungle", "animals", "dot marker"],
+    "amazon_url": "https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0GS98FJ4S",
+    "etsy_url": "https://www.etsy.com/listing/4530506313/animal-dot-marker-activity-book-50",
+    "image_url": "images/Animals1.jpg",
+    "rating": 4.7,
+    "review_count": 92,
+    "available": true
+  }
+]

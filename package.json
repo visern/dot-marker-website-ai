@@ -6,6 +6,12 @@
   "scripts": {
     "ingest": "node scripts/ingest.js"
   },
+  "dependencies": {
+    "@napi-rs/canvas": "0.1.80",
+    "@tesseract.js-data/eng": "1.0.0",
+    "pdf-parse": "2.4.5",
+    "tesseract.js": "7.0.0"
+  },
   "engines": {
     "node": "24.x"
   }

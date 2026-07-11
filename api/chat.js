@@ -10,7 +10,7 @@ const GEMINI_EMBED_MODEL = 'gemini-embedding-001';
 // itself slated to sunset 2026-10-16 — check ai.google.dev/gemini-api/docs/deprecations
 // if this endpoint starts 404ing again after that date.
 const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
-const TOP_K = 4;
+const TOP_K = 6;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_HISTORY_TURNS = 6;
 
@@ -80,6 +80,21 @@ function loadRecords() {
   return cachedRecords;
 }
 
+// Facts (ages, page counts, links, availability) never go through embeddings
+// or the model's guesswork — they're read straight from the generated
+// products.json and handed to the model verbatim on every request. There
+// are only 3 products, so there's no need for retrieval or a query router
+// here; that becomes worth building once a catalog is too big to fit in a
+// prompt outright.
+let cachedProducts = null;
+function loadProducts() {
+  if (!cachedProducts) {
+    const filePath = path.join(process.cwd(), 'data', 'products.json');
+    cachedProducts = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  }
+  return cachedProducts;
+}
+
 function cosineSimilarity(a, b) {
   let dot = 0;
   let normA = 0;
@@ -121,13 +136,18 @@ function retrieveContext(queryEmbedding, records) {
 
 const SYSTEM_PROMPT = `You are the friendly customer-support chat assistant for Dot Marker Books (veronikadaves.com), a small business selling screen-free dot marker activity books for toddlers and preschoolers.
 
-Answer ONLY using the "Context" provided below each user question. The context comes from the store's own site content.
-- If the answer isn't in the context, say you're not sure and suggest they use the contact form on the site, or check the book listings on Amazon/Etsy. Do not make up facts, prices, or policies.
+You're given two kinds of information with each question:
+- "Product Database" — exact facts (ages, page counts, ratings, purchase links, availability) for every book. This is ground truth: for questions like "how many pages" or "where do I buy it," read the answer directly from here and never estimate or contradict it.
+- "Context" — passages retrieved from marketing descriptions and the books' own interior pages (e.g. which page a specific animal or letter appears on). Use this for "tell me about," "which page has X," or recommendation-style questions.
+
+Rules:
+- If the answer isn't in either source, say you're not sure and suggest the contact form on the site, or the book listings on Amazon/Etsy. Do not make up facts, prices, ages, or page numbers.
 - Keep answers short, warm, and helpful (2-4 sentences).
-- When relevant, mention the specific book title and a purchase link from the context.
+- When relevant, mention the specific book title and a purchase link from the Product Database.
 - Do not answer questions unrelated to Dot Marker Books, its products, or this website.`;
 
-async function callGemini(message, history, context) {
+async function callGemini(message, history, products, context) {
+  const productsBlock = JSON.stringify(products, null, 2);
   const contextBlock = context
     .map((c) => `### ${c.title}\n${c.text}`)
     .join('\n\n');
@@ -139,7 +159,7 @@ async function callGemini(message, history, context) {
     })),
     {
       role: 'user',
-      parts: [{ text: `Context:\n${contextBlock}\n\nQuestion: ${message}` }],
+      parts: [{ text: `Product Database:\n${productsBlock}\n\nContext:\n${contextBlock}\n\nQuestion: ${message}` }],
     },
   ];
 
@@ -197,10 +217,11 @@ module.exports = async (req, res) => {
     : [];
 
   try {
+    const products = loadProducts();
     const records = loadRecords();
     const queryEmbedding = await embedQuery(message);
     const context = retrieveContext(queryEmbedding, records);
-    const reply = await callGemini(message, safeHistory, context);
+    const reply = await callGemini(message, safeHistory, products, context);
     res.status(200).json({ reply });
   } catch (err) {
     console.error(err);
