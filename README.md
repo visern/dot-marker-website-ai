@@ -27,10 +27,12 @@ knowledge/
 - **`knowledge/books/*.md`, `knowledge/site/*.md`** — one embedded chunk per
   file, used for "tell me about," "which book would you recommend," and
   general site questions (FAQ, about, contact, etc.).
-- **`knowledge/pdfs/*.pdf`** — the real interior files. `abc_interior.pdf`
-  and `animals_interior.pdf` have a real text layer and are read directly.
-  `jungle_interior.pdf` is a pure image export (Canva) with no embedded
-  text at all, so its pages are rendered to PNG and OCR'd
+- **`knowledge/pdfs/*.pdf`** — the real interior files, named to match the
+  book titles in `products.json`. `dot-markers-abc_interior.pdf` and
+  `dot-markers-animals_interior.pdf` have a real text layer and are read
+  directly. `dot-markers-animals-vol-2_interior.pdf` is a pure image export
+  (Canva) with no embedded text at all, so its pages are rendered to PNG
+  and OCR'd
   (`tesseract.js` + `@napi-rs/canvas`, using the locally-installed
   `@tesseract.js-data/eng` trained data — no CDN download needed at build
   time). OCR gets the vast majority of pages right automatically; the
@@ -89,7 +91,7 @@ For local development, copy `.env.example` to `.env`, fill in the key, and run
 - **A book's interior changed**, or you're adding a new book? Replace the
   PDF under `knowledge/pdfs/`. If it has a real text layer, add it to
   `TEXT_LAYER_BOOKS` in `scripts/ingest.js`; if it's image-only like
-  `jungle_interior.pdf`, add it to `OCR_BOOKS` instead, then check the
+  `dot-markers-animals-vol-2_interior.pdf`, add it to `OCR_BOOKS` instead, then check the
   ingestion log for any garbled/missing pages and add verified corrections
   to `OCR_CORRECTIONS` (visually check the actual page before adding one —
   don't guess).

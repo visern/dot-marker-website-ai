@@ -26,17 +26,17 @@ const DATA_DIR = path.join(__dirname, '..', 'data');
 // Books whose interior PDF has a real text layer we can read directly.
 // Anything not listed here falls back to OCR (see ocrPdfPages below).
 const TEXT_LAYER_BOOKS = {
-  abc: 'abc_interior.pdf',
-  animals: 'animals_interior.pdf',
+  abc: 'dot-markers-abc_interior.pdf',
+  animals: 'dot-markers-animals_interior.pdf',
 };
 const OCR_BOOKS = {
-  jungle: 'jungle_interior.pdf',
+  jungle: 'dot-markers-animals-vol-2_interior.pdf',
 };
 
 // OCR on this book's cursive-font captions gets ~85% of pages right
 // automatically; these specific pages were manually checked against the
 // actual rendered page (not guessed) and corrected. Re-verify against the
-// real page before editing this list if jungle_interior.pdf ever changes.
+// real page before editing this list if dot-markers-animals-vol-2_interior.pdf ever changes.
 const OCR_CORRECTIONS = {
   jungle: {
     19: 'Lemur', // OCR read "Lemar"
