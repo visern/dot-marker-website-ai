@@ -11,7 +11,7 @@
     "themes": ["alphabet", "letters", "learning"],
     "amazon_url": "https://www.amazon.com/dp/B0H7RPKQWG",
     "etsy_url": null,
-    "image_url": "images/ABC1.png",
+    "image_url": "images/dot-markers-abc.png",
     "rating": null,
     "review_count": 0,
     "available": true
@@ -28,7 +28,7 @@
     "themes": ["ocean", "sea animals", "dot marker"],
     "amazon_url": "https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3",
     "etsy_url": null,
-    "image_url": "images/Shark-1.jpg",
+    "image_url": "images/dot-markers-animals.jpg",
     "rating": 4.6,
     "review_count": 11,
     "available": true
@@ -45,7 +45,7 @@
     "themes": ["jungle", "animals", "dot marker"],
     "amazon_url": "https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0GS98FJ4S",
     "etsy_url": "https://www.etsy.com/listing/4530506313/animal-dot-marker-activity-book-50",
-    "image_url": "images/Animals1.jpg",
+    "image_url": "images/dot-markers-animals-vol-2.jpg",
     "rating": 4.7,
     "review_count": 92,
     "available": true
