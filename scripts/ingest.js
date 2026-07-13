@@ -170,7 +170,18 @@ async function ocrPdfChunks(bookId, filename) {
   return chunks;
 }
 
-async function embedBatch(texts) {
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Google's free-tier embedding quota is per-minute, and appears to count
+// each item inside a batchEmbedContents call toward it (not just the API
+// call itself) - so sending batches back-to-back can exceed it even though
+// each individual call is well under the batch size limit. On a 429, Google
+// tells us exactly how long to wait via RetryInfo.retryDelay; honor that
+// (with a sane fallback) instead of failing the whole build.
+const MAX_EMBED_RETRIES = 5;
+const DEFAULT_RETRY_DELAY_MS = 60_000;
+
+async function embedBatch(texts, attempt = 1) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_EMBED_MODEL}:batchEmbedContents`;
   const res = await fetch(url, {
     method: 'POST',
@@ -183,6 +194,17 @@ async function embedBatch(texts) {
       })),
     }),
   });
+
+  if (res.status === 429 && attempt < MAX_EMBED_RETRIES) {
+    const body = await res.text();
+    let delayMs = DEFAULT_RETRY_DELAY_MS;
+    const match = body.match(/"retryDelay":\s*"(\d+)s"/);
+    if (match) delayMs = Number(match[1]) * 1000 + 2000; // pad 2s past what Google asked for
+    console.log(`  Rate limited embedding batch (attempt ${attempt}/${MAX_EMBED_RETRIES}), waiting ${Math.round(delayMs / 1000)}s...`);
+    await sleep(delayMs);
+    return embedBatch(texts, attempt + 1);
+  }
+
   if (!res.ok) {
     throw new Error(`Gemini API error ${res.status}: ${await res.text()}`);
   }
@@ -197,6 +219,9 @@ async function embedAll(chunks) {
     console.log(`Embedding chunks ${i + 1}-${i + batch.length} of ${chunks.length}...`);
     const texts = batch.map((c) => `${c.title}\n${c.text}`);
     embeddings.push(...(await embedBatch(texts)));
+    // Pace ourselves between batches so consecutive batches don't cumulatively
+    // exceed the free tier's per-minute quota even without hitting a 429 first.
+    if (i + EMBED_BATCH_SIZE < chunks.length) await sleep(65_000);
   }
   return embeddings;
 }
