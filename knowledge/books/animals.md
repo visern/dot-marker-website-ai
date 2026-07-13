@@ -23,4 +23,17 @@ with Dauber Dawgs Markers, Dab O Ink Markers, or any other dot markers.
 Perfect for quiet play at home, preschool activities, or a unique gift —
 98 pages of ocean-themed dotting fun.
 
+## Full animal list
+
+Dolphin, Clownfish, Sea Turtle, Seahorse, Starfish, Jellyfish, Whale,
+Octopus, Penguin, Crab, Narwhal, Sea Lion, Batfish, Blue Tang, Shrimp,
+Manatee, Lobster, Rainbow Fish, Angelfish, Stingray, Killer Whale,
+Pufferfish, Squid, Barracuda, Moray Eel, Hermit Crab, Swordfish, Grouper,
+Manta Ray, Blue Whale, Boxfish, Leafy Seadragon, Ribbon Eel, Beluga Whale,
+Mahi Mahi, Coral Reef Fish, Sea Dragon, Seahorse, Sand Dollar, Sea Otter,
+Fiddler Crab, Sea Cucumber, Hammerhead Shark, Pygmy Seahorse, Tortoise,
+Pink Squid, Lanternfish, Spiny Lobster, Whale Shark, Spotted Moray Eel,
+Moon Jellyfish, Cone Snail, Frogfish, Goby Fish, Anglerfish, Goldfish,
+White Shark, Dolphin.
+
 Recommended for ages 2 and up. Sold in paperback on Amazon.

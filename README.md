@@ -12,10 +12,9 @@ real product catalog would be — not everything goes through embeddings:
 knowledge/
 ├── products.json     facts (ages, pages, links, ratings) — NEVER embedded,
 │                     read verbatim and handed to the model on every request
-├── books/*.md        marketing narrative per book — embedded (semantic search)
-├── site/*.md         about/FAQ/contact/reviews/etc. — embedded
-└── pdfs/*.pdf        the actual book interiors — one chunk per PAGE, embedded
-                       (lets the bot answer "which page has the shark?")
+├── books/*.md        marketing narrative + full contents list per book —
+│                     embedded (semantic search)
+└── site/*.md         about/FAQ/contact/reviews/etc. — embedded
 ```
 
 - **`knowledge/products.json`** — the product database. Questions like "how
@@ -25,27 +24,18 @@ knowledge/
   needed at this scale. `scripts/ingest.js` copies it verbatim to
   `data/products.json` (no embedding involved).
 - **`knowledge/books/*.md`, `knowledge/site/*.md`** — one embedded chunk per
-  file, used for "tell me about," "which book would you recommend," and
-  general site questions (FAQ, about, contact, etc.).
-- **`knowledge/pdfs/*.pdf`** — the real interior files, named to match the
-  book titles in `products.json`. `dot-markers-abc_interior.pdf` and
-  `dot-markers-animals_interior.pdf` have a real text layer and are read
-  directly. `dot-markers-animals-vol-2_interior.pdf` is a pure image export
-  (Canva) with no embedded text at all, so its pages are rendered to PNG
-  and OCR'd
-  (`tesseract.js` + `@napi-rs/canvas`, using the locally-installed
-  `@tesseract.js-data/eng` trained data — no CDN download needed at build
-  time). OCR gets the vast majority of pages right automatically; the
-  handful it doesn't (cursive-font truncation, one page it missed
-  entirely) are fixed via a small, manually-verified `OCR_CORRECTIONS`
-  table in `scripts/ingest.js` — each entry was checked against the actual
-  rendered page, not guessed.
-- **`scripts/ingest.js`** — runs the whole pipeline above and writes
-  `data/products.json` + `data/embeddings.json`. Runs automatically on every
-  Vercel build (`vercel.json` → `buildCommand`); neither output file is
-  committed to git (see `.gitignore`) — they're regenerated fresh each
-  deploy. Because of the OCR step, a build now takes a few minutes rather
-  than seconds.
+  file, used for "tell me about," "does this book have X," "which book
+  would you recommend," and general site questions (FAQ, about, contact,
+  etc.). Each book's `.md` includes its full contents list (every letter
+  for the ABC book, every animal for the two Animals books) pulled from the
+  real interior PDFs, so the chatbot can answer "does the book have a
+  llama" without needing the PDFs themselves in the repo or at build time —
+  10 total chunks, no page-level chunking, no OCR.
+- **`scripts/ingest.js`** — copies `products.json` and embeds the 10
+  markdown files, writing `data/products.json` + `data/embeddings.json`.
+  Runs automatically on every Vercel build (`vercel.json` → `buildCommand`);
+  neither output file is committed to git (see `.gitignore`) — they're
+  regenerated fresh each deploy.
 - **`api/chat.js`** — on each message: embeds the visitor's question, finds
   the most relevant chunks from `data/embeddings.json` (cosine similarity),
   and sends Gemini (`gemini-2.5-flash`) both the full Product Database and
@@ -86,15 +76,12 @@ For local development, copy `.env.example` to `.env`, fill in the key, and run
 
 - **Facts changed** (price, page count, a new purchase link, availability)?
   Edit `knowledge/products.json`.
-- **Marketing copy or a FAQ answer changed**? Edit the relevant file under
-  `knowledge/books/` or `knowledge/site/`.
-- **A book's interior changed**, or you're adding a new book? Replace the
-  PDF under `knowledge/pdfs/`. If it has a real text layer, add it to
-  `TEXT_LAYER_BOOKS` in `scripts/ingest.js`; if it's image-only like
-  `dot-markers-animals-vol-2_interior.pdf`, add it to `OCR_BOOKS` instead, then check the
-  ingestion log for any garbled/missing pages and add verified corrections
-  to `OCR_CORRECTIONS` (visually check the actual page before adding one —
-  don't guess).
+- **Marketing copy, a FAQ answer, or a book's contents list changed**? Edit
+  the relevant file under `knowledge/books/` or `knowledge/site/`. If a
+  book's interior changes or a new book is added, update its "Full contents
+  list" section by hand from the real interior file — don't guess.
+- **New book added**? Add a product entry to `products.json` and a new
+  `knowledge/books/<id>.md` file following the existing ones.
 
 In every case, just redeploy — ingestion re-runs automatically as part of
 the Vercel build. No manual embedding step or commit needed.

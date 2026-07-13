@@ -30,4 +30,18 @@ filler for toddlers and preschoolers. Great for homeschool families and
 classroom learning too. Markers not included — pair with any washable dot
 markers/daubers.
 
+## Full alphabet and bonus pages
+
+A – Apple, B – Bear, C – Cow, D – Dog, E – Elephant, F – Fish, G – Goat,
+H – Horse, I – Insect, J – Juice, K – Kite, L – Leaf, M – Milk, N – Nest,
+O – Octopus, P – Pig, Q – Queen, R – Rainbow, S – Sun, T – Turtle,
+U – Unicorn, V – Volcano, W – Watermelon, X – X-ray Fish, Y – Yak, Z – Zebra.
+
+Bonus animal pages: Duck, Frog, Bunny, Pigeon.
+Bonus nature pages: Star, Moon, Cloud, Tree, Flower, Mountain.
+Bonus food pages: Banana, Carrot, Ice Cream, Cookie, Bread, Donut,
+Strawberry, Pumpkin, Cup, Spoon, Ball.
+Bonus toy pages: Toy Car, Balloon, Puzzle Pieces, Robot, Airplane, Rocket,
+Boat, Truck, Train.
+
 Recommended for ages 1–5. Sold in paperback on Amazon.
