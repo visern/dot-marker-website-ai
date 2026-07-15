@@ -11,6 +11,12 @@ const GEMINI_EMBED_MODEL = 'gemini-embedding-001';
 // replacement) is current now — check ai.google.dev/gemini-api/docs/deprecations
 // if this endpoint starts 404ing again in the future.
 const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-3.5-flash';
+// Fallback provider used only if Gemini's own generation retries are
+// exhausted (e.g. a sustained outage, not just a brief 503 blip). Optional:
+// if GROQ_API_KEY isn't set, the fallback is simply skipped and the original
+// Gemini error is returned, same as before this existed.
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_CHAT_MODEL = process.env.GROQ_CHAT_MODEL || 'llama-3.3-70b-versatile';
 const TOP_K = 6;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_HISTORY_TURNS = 6;
@@ -147,6 +153,14 @@ Rules:
 - When relevant, mention the specific book title and a purchase link from the Product Database.
 - Do not answer questions unrelated to Dot Marker Books, its products, or this website.`;
 
+function buildUserPrompt(message, products, context) {
+  const productsBlock = JSON.stringify(products, null, 2);
+  const contextBlock = context
+    .map((c) => `### ${c.title}\n${c.text}`)
+    .join('\n\n');
+  return `Product Database:\n${productsBlock}\n\nContext:\n${contextBlock}\n\nQuestion: ${message}`;
+}
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // Google occasionally returns 503 UNAVAILABLE under transient load spikes with
 // no RetryInfo delay attached, unlike embedding 429s. Unlike the build-time
@@ -156,20 +170,13 @@ const MAX_GENERATE_RETRIES = 3;
 const GENERATE_RETRY_DELAYS_MS = [500, 1500];
 
 async function callGemini(message, history, products, context) {
-  const productsBlock = JSON.stringify(products, null, 2);
-  const contextBlock = context
-    .map((c) => `### ${c.title}\n${c.text}`)
-    .join('\n\n');
-
+  const userPrompt = buildUserPrompt(message, products, context);
   const contents = [
     ...history.map((m) => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }],
     })),
-    {
-      role: 'user',
-      parts: [{ text: `Product Database:\n${productsBlock}\n\nContext:\n${contextBlock}\n\nQuestion: ${message}` }],
-    },
+    { role: 'user', parts: [{ text: userPrompt }] },
   ];
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_CHAT_MODEL}:generateContent`;
@@ -197,6 +204,40 @@ async function callGemini(message, history, products, context) {
     await sleep(GENERATE_RETRY_DELAYS_MS[attempt - 1]);
   }
   throw lastError;
+}
+
+// Groq's API is OpenAI-compatible, so this is a plain chat-completions call
+// rather than Gemini's contents/parts shape.
+async function callGroq(message, history, products, context) {
+  const userPrompt = buildUserPrompt(message, products, context);
+  const messages = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    ...history.map((m) => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content })),
+    { role: 'user', content: userPrompt },
+  ];
+
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_API_KEY}` },
+    body: JSON.stringify({ model: GROQ_CHAT_MODEL, messages, max_tokens: 400 }),
+  });
+  if (!res.ok) {
+    throw new Error(`Groq API error ${res.status}: ${await res.text()}`);
+  }
+  const data = await res.json();
+  return (data.choices && data.choices[0] && data.choices[0].message.content || '').trim();
+}
+
+// Gemini is the primary generator; Groq only steps in once Gemini's own
+// retries (above) are exhausted, e.g. a sustained outage rather than a blip.
+async function generateReply(message, history, products, context) {
+  try {
+    return await callGemini(message, history, products, context);
+  } catch (err) {
+    if (!GROQ_API_KEY) throw err;
+    console.error('Gemini generation failed, falling back to Groq:', err);
+    return callGroq(message, history, products, context);
+  }
 }
 
 module.exports = async (req, res) => {
@@ -237,7 +278,7 @@ module.exports = async (req, res) => {
     const records = loadRecords();
     const queryEmbedding = await embedQuery(message);
     const context = retrieveContext(queryEmbedding, records);
-    const reply = await callGemini(message, safeHistory, products, context);
+    const reply = await generateReply(message, safeHistory, products, context);
     res.status(200).json({ reply });
   } catch (err) {
     console.error(err);

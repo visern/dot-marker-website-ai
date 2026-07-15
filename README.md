@@ -38,12 +38,20 @@ knowledge/
   regenerated fresh each deploy.
 - **`api/chat.js`** — on each message: embeds the visitor's question, finds
   the most relevant chunks from `data/embeddings.json` (cosine similarity),
-  and sends Gemini (`gemini-2.5-flash`) both the full Product Database and
+  and sends Gemini (`gemini-3.5-flash`) both the full Product Database and
   the retrieved Context, with the system prompt explaining which one
   answers which kind of question. `vercel.json` explicitly bundles
   `data/**` into this function via `functions.includeFiles`, since the file
   path is built at runtime and Vercel's automatic bundler can't always
   detect it.
+- **Generation fallback**: Gemini generation retries a couple of times on
+  transient 503/429s; if it's still failing (a sustained outage, not a
+  blip), and `GROQ_API_KEY` is set, `api/chat.js` falls back to Groq's free
+  tier (`llama-3.3-70b-versatile`) for that reply instead of erroring out.
+  This only covers the generation step — retrieval still relies on
+  Gemini's embeddings, so a Gemini outage that also breaks embedding
+  requests still surfaces as an error. Optional: without `GROQ_API_KEY`,
+  behavior is unchanged from before this existed.
 - **Model lifecycle note**: Google retires Gemini model IDs on a rolling basis (e.g.
   `gemini-2.0-flash`, `text-embedding-004`, and `gemini-2.5-flash` were all already
   retired/cut off for new users by the time this was written; `gemini-3.5-flash` is
@@ -66,7 +74,10 @@ knowledge/
    (free tier is plenty) so `/api/chat` has rate limiting. Vercel wires up the
    `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` env vars automatically —
    no code changes needed. A Vercel KV store works the same way.
-4. Deploy (or redeploy). The build runs `npm run ingest` automatically, producing
+4. Optional: get a free Groq API key (https://console.groq.com/keys) and add it as
+   `GROQ_API_KEY` so chat replies keep working if Gemini generation has a sustained
+   outage.
+5. Deploy (or redeploy). The build runs `npm run ingest` automatically, producing
    `data/embeddings.json` for that deployment.
 5. Test the chat bubble on the live site.
 
