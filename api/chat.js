@@ -6,10 +6,11 @@ const path = require('path');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_EMBED_MODEL = 'gemini-embedding-001';
-// gemini-2.0-flash was retired 2026-06-01; gemini-2.5-flash is current but is
-// itself slated to sunset 2026-10-16 — check ai.google.dev/gemini-api/docs/deprecations
-// if this endpoint starts 404ing again after that date.
-const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
+// gemini-2.0-flash was retired 2026-06-01; gemini-2.5-flash was cut off for new
+// users ahead of its 2026-10-16 shutdown date, so gemini-3.5-flash (its GA
+// replacement) is current now — check ai.google.dev/gemini-api/docs/deprecations
+// if this endpoint starts 404ing again in the future.
+const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-3.5-flash';
 const TOP_K = 6;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_HISTORY_TURNS = 6;

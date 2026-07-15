@@ -45,8 +45,9 @@ knowledge/
   path is built at runtime and Vercel's automatic bundler can't always
   detect it.
 - **Model lifecycle note**: Google retires Gemini model IDs on a rolling basis (e.g.
-  `gemini-2.0-flash` and `text-embedding-004` were both already retired by the time this
-  was written). If ingestion or chat starts returning 404s, check
+  `gemini-2.0-flash`, `text-embedding-004`, and `gemini-2.5-flash` were all already
+  retired/cut off for new users by the time this was written; `gemini-3.5-flash` is
+  the current chat model). If ingestion or chat starts returning 404s, check
   https://ai.google.dev/gemini-api/docs/deprecations and bump `GEMINI_CHAT_MODEL` /
   the embed model constant in `api/chat.js` and `scripts/ingest.js`.
 - The chat widget (bottom-right bubble) is inlined in `index.html` and calls `/api/chat`.
