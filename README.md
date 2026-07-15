@@ -46,6 +46,16 @@ knowledge/
   at runtime and Vercel's automatic bundler can't always detect it.
   Generation retries a couple of times on transient 503/429s before
   erroring out.
+- **Generation fallback**: if Groq generation is still failing after its own
+  retries (a sustained outage, not a blip), and `GEMINI_API_KEY` is set,
+  `api/chat.js` falls back to Gemini (`gemini-3.5-flash`) for that reply
+  instead of erroring out. This only covers the generation step — retrieval
+  still relies on Groq's `nomic-embed-text-v1_5` embeddings, so a Groq
+  embedding-endpoint outage still surfaces as an error even with
+  `GEMINI_API_KEY` set (Gemini's embedding vectors live in a different,
+  incompatible vector space than what's stored in `data/embeddings.json`).
+  Optional: without `GEMINI_API_KEY`, behavior is unchanged from before this
+  existed.
 - **Reply cache**: the first message of a conversation is cached in Redis for
   1 hour, keyed by the normalized question text (case/whitespace-insensitive
   exact match, not semantic). A repeated FAQ-style question ("how many
@@ -69,12 +79,15 @@ knowledge/
    **Production, Preview, and Development** — it's needed at build time (ingestion) and
    at request time (query embedding + generation).
 3. Recommended: add the **Upstash Redis** integration from the Vercel Marketplace
-   (free tier is plenty) so `/api/chat` has rate limiting. Vercel wires up the
-   `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` env vars automatically —
-   no code changes needed. A Vercel KV store works the same way.
-4. Deploy (or redeploy). The build runs `npm run ingest` automatically, producing
+   (free tier is plenty) so `/api/chat` has rate limiting and the reply cache. Vercel
+   wires up the `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` env vars
+   automatically — no code changes needed. A Vercel KV store works the same way.
+4. Optional: get a free Gemini API key (https://aistudio.google.com/apikey) and add it
+   as `GEMINI_API_KEY` so chat replies keep working if Groq generation has a sustained
+   outage.
+5. Deploy (or redeploy). The build runs `npm run ingest` automatically, producing
    `data/embeddings.json` for that deployment.
-5. Test the chat bubble on the live site.
+6. Test the chat bubble on the live site.
 
 For local development, copy `.env.example` to `.env`, fill in the key, and run
 `npm run ingest` to generate a local `data/embeddings.json`.

@@ -8,6 +8,16 @@ const crypto = require('crypto');
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_EMBED_MODEL = 'nomic-embed-text-v1_5';
 const GROQ_CHAT_MODEL = process.env.GROQ_CHAT_MODEL || 'llama-3.3-70b-versatile';
+// Fallback provider used only if Groq's own generation retries (below) are
+// exhausted, e.g. a sustained outage rather than a brief blip. Optional: if
+// GEMINI_API_KEY isn't set, the fallback is simply skipped and Groq's own
+// error is returned. This only covers generation, not embeddings/retrieval —
+// Gemini's embedding vectors live in a different, incompatible vector space
+// than the nomic-embed-text-v1_5 vectors already stored in
+// data/embeddings.json, so a Groq embedding-endpoint outage still surfaces
+// as an error even with GEMINI_API_KEY set.
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-3.5-flash';
 const TOP_K = 6;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_HISTORY_TURNS = 6;
@@ -241,6 +251,51 @@ async function callGroq(message, history, products, context) {
   throw lastError;
 }
 
+// Gemini's request shape differs from Groq's OpenAI-compatible one: contents
+// use role 'model' instead of 'assistant', and the system prompt is a
+// separate top-level field rather than a message in the list.
+async function callGemini(message, history, products, context) {
+  const userPrompt = buildUserPrompt(message, products, context);
+  const contents = [
+    ...history.map((m) => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }],
+    })),
+    { role: 'user', parts: [{ text: userPrompt }] },
+  ];
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_CHAT_MODEL}:generateContent`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents,
+      generationConfig: { maxOutputTokens: 400 },
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(`Gemini API error ${res.status}: ${await res.text()}`);
+  }
+  const data = await res.json();
+  const parts = data.candidates && data.candidates[0] && data.candidates[0].content
+    ? data.candidates[0].content.parts
+    : [];
+  return parts.map((p) => p.text || '').join('').trim();
+}
+
+// Groq is the primary generator; Gemini only steps in once Groq's own
+// retries (above) are exhausted, e.g. a sustained outage rather than a blip.
+async function generateReply(message, history, products, context) {
+  try {
+    return await callGroq(message, history, products, context);
+  } catch (err) {
+    if (!GEMINI_API_KEY) throw err;
+    console.error('Groq generation failed, falling back to Gemini:', err);
+    return callGemini(message, history, products, context);
+  }
+}
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -292,7 +347,7 @@ module.exports = async (req, res) => {
     const records = loadRecords();
     const queryEmbedding = await embedQuery(message);
     const context = retrieveContext(queryEmbedding, records);
-    const reply = await callGroq(message, safeHistory, products, context);
+    const reply = await generateReply(message, safeHistory, products, context);
 
     if (cacheKey) {
       await setCachedReply(cacheKey, reply);
