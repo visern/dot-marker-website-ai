@@ -18,7 +18,7 @@ const GROQ_CHAT_MODEL = process.env.GROQ_CHAT_MODEL || 'llama-3.3-70b-versatile'
 // as an error even with GEMINI_API_KEY set.
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-3.5-flash';
-const TOP_K = 2;
+const TOP_K = 3;
 // Below this cosine similarity, a chunk is treated as unrelated to the
 // question rather than padded in just to fill TOP_K. An empirical starting
 // point, not a calibrated value — retrieval quality is worth spot-checking
