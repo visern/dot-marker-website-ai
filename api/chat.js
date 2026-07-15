@@ -147,6 +147,14 @@ Rules:
 - When relevant, mention the specific book title and a purchase link from the Product Database.
 - Do not answer questions unrelated to Dot Marker Books, its products, or this website.`;
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// Google occasionally returns 503 UNAVAILABLE under transient load spikes with
+// no RetryInfo delay attached, unlike embedding 429s. Unlike the build-time
+// ingestion script, this runs inline in a live request, so retries must stay
+// short enough to fit inside the function's execution timeout.
+const MAX_GENERATE_RETRIES = 3;
+const GENERATE_RETRY_DELAYS_MS = [500, 1500];
+
 async function callGemini(message, history, products, context) {
   const productsBlock = JSON.stringify(products, null, 2);
   const contextBlock = context
@@ -165,23 +173,30 @@ async function callGemini(message, history, products, context) {
   ];
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_CHAT_MODEL}:generateContent`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-      contents,
-      generationConfig: { maxOutputTokens: 400 },
-    }),
-  });
-  if (!res.ok) {
-    throw new Error(`Gemini API error ${res.status}: ${await res.text()}`);
+  let lastError;
+  for (let attempt = 1; attempt <= MAX_GENERATE_RETRIES; attempt++) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        contents,
+        generationConfig: { maxOutputTokens: 400 },
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const parts = data.candidates && data.candidates[0] && data.candidates[0].content
+        ? data.candidates[0].content.parts
+        : [];
+      return parts.map((p) => p.text || '').join('').trim();
+    }
+    lastError = new Error(`Gemini API error ${res.status}: ${await res.text()}`);
+    const retryable = res.status === 503 || res.status === 429;
+    if (!retryable || attempt === MAX_GENERATE_RETRIES) break;
+    await sleep(GENERATE_RETRY_DELAYS_MS[attempt - 1]);
   }
-  const data = await res.json();
-  const parts = data.candidates && data.candidates[0] && data.candidates[0].content
-    ? data.candidates[0].content.parts
-    : [];
-  return parts.map((p) => p.text || '').join('').trim();
+  throw lastError;
 }
 
 module.exports = async (req, res) => {
