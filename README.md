@@ -71,14 +71,29 @@ For local development, copy `.env.example` to `.env`, fill in the key, and run
 
 ## Updating the knowledge base
 
-- **Facts changed** (price, page count, a new purchase link, availability)?
-  Edit `knowledge/products.json`.
+- **Edited a book card in `index.html`** (title, series, description, pages,
+  ages, rating, review count, Amazon/Etsy link)? Run `npm run sync-knowledge`
+  locally. It parses the book cards straight out of `index.html`, diffs them
+  against `knowledge/products.json`, and rewrites just the fields that
+  changed (matching cards to products by the ASIN in their Amazon URL, so it
+  survives title rewording). It also updates the matching
+  `knowledge/books/<id>.md` heading if the title changed. Review the printed
+  diff, then commit `knowledge/products.json` (and any `.md` heading change)
+  yourself — this only exists to catch drift between the visible site and
+  the chatbot's facts (this is exactly how a stale ASIN once ended up live on
+  the site). It's a local step, not part of the Vercel build: build-time
+  file writes never get committed back to git, so running it there would
+  just silently disappear on the next deploy. It only covers the fields that
+  actually appear in the book cards — see below for everything else.
 - **Marketing copy, a FAQ answer, or a book's contents list changed**? Edit
-  the relevant file under `knowledge/books/` or `knowledge/site/`. If a
-  book's interior changes or a new book is added, update its "Full contents
-  list" section by hand from the real interior file — don't guess.
+  the relevant file under `knowledge/books/` or `knowledge/site/` by hand —
+  the long-form Amazon-style copy and "Full contents list" sections have no
+  source of truth in `index.html` (the card's description is one sentence,
+  not the full listing), so update those from the real interior file or
+  listing — don't guess.
 - **New book added**? Add a product entry to `products.json` and a new
-  `knowledge/books/<id>.md` file following the existing ones.
+  `knowledge/books/<id>.md` file following the existing ones (`sync-knowledge`
+  will only warn about the unmatched card, not create these for you).
 
 In every case, just redeploy — ingestion re-runs automatically as part of
 the Vercel build. No manual embedding step or commit needed.
