@@ -531,8 +531,8 @@
         <span class="splash" style="width:35px;height:35px;background:var(--purple);opacity:0.3;top:20%;right:15px"></span>
       </div>
       <div class="book-fan">
-        <div class="fan-item"><img src="images/dot-markers-abc.png" alt="Dot Markers Activity Book — ABC" /></div>
-        <div class="fan-item"><img src="images/dot-markers-animals-vol-2.jpg" alt="Dot Markers Activity Book — Jungle Animals" /></div>
+        <div class="fan-item"><img src="images/dot-markers-abc.png" alt="Dot Markers Activity Book — ABC Favorite Things" /></div>
+        <div class="fan-item"><img src="images/dot-markers-animals-vol-2.jpg" alt="Dot Markers Activity Book — Animals" /></div>
         <div class="fan-item"><img src="images/dot-markers-animals.jpg" alt="Dot Markers Activity Book — Ocean Animals" /></div>
       </div>
       <div class="hero-badge badge-top badge-proof">
@@ -608,11 +608,11 @@
 
         <article class="book-card reveal">
           <div class="book-img-wrap">
-            <img src="images/dot-markers-animals-vol-2.jpg" alt="Dot Markers Activity Book — Jungle Animals" />
+            <img src="images/dot-markers-animals-vol-2.jpg" alt="Dot Markers Activity Book — Animals" />
           </div>
           <div class="book-body">
             <div class="book-series s-lime">Jungle Animals Series</div>
-            <h3 class="book-title">Dot Markers Activity Book — Jungle Animals</h3>
+            <h3 class="book-title">Dot Markers Activity Book — Animals</h3>
             <div class="book-rating">★★★★★ <span style="color:var(--navy2);opacity:.6;font-size:.75rem;font-weight:700">4.7 · 92 reviews</span></div>
             <p class="book-desc">Sloths, lions, monkeys & more! The jungle sequel kids keep asking for — more animals, more fun.</p>
             <div class="book-meta"><span>108 pages</span><span>•</span><span>Ages 2+</span><span>•</span><span>Paperback</span></div>
@@ -641,12 +641,12 @@
 
         <article class="book-card reveal reveal-delay-2">
           <div class="book-img-wrap">
-            <img src="images/dot-markers-abc.png" alt="Dot Markers Activity Book — ABC" />
+            <img src="images/dot-markers-abc.png" alt="Dot Markers Activity Book — ABC Favorite Things" />
             <span class="book-chip chip-new">New!</span>
           </div>
           <div class="book-body">
             <div class="book-series s-forest">ABC Learning Series</div>
-            <h3 class="book-title">Dot Markers Activity Book — ABC</h3>
+            <h3 class="book-title">Dot Markers Activity Book — ABC Favorite Things</h3>
             <div class="book-rating"><span style="color:var(--forest);font-size:.78rem;font-weight:800;letter-spacing:.04em">✦ Just Launched — Be the First to Review</span></div>
             <p class="book-desc">Big easy dots, alphabet fun! Learn A to Z through dot painting — every letter gets its own bold, colorful page.</p>
             <div class="book-meta"><span>114 pages</span><span>•</span><span>Ages 1–5</span><span>•</span><span>Paperback</span></div>
@@ -839,7 +839,7 @@
 
         <div class="faq-item reveal reveal-delay-2">
           <div class="faq-q"><span class="dot" style="background:var(--purple)"></span> How many pages are in each book?</div>
-          <p class="faq-a">The Ocean Animals book has 98 pages, and the Jungle Animals sequel has 108. The ABC book has 114 pages — one spread per letter, plus bonus pages. All are printed on quality paper stock.</p>
+          <p class="faq-a">The Ocean Animals book has 98 pages, and the Animals sequel has 108. The ABC Favorite Things book has 114 pages — one spread per letter, plus bonus pages. All are printed on quality paper stock.</p>
         </div>
 
         <div class="faq-item reveal reveal-delay-3">
@@ -923,8 +923,8 @@
     // CSV export
     var BOOKS = [
       { title: 'Dot Markers Activity Book — Ocean Animals',  series: 'Ocean Animals Series',  ages: '2+', pages: '98',  url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3' },
-      { title: 'Dot Markers Activity Book — Jungle Animals', series: 'Jungle Animals Series', ages: '2+', pages: '108', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0D83CZ2GT' },
-      { title: 'Dot Markers Activity Book — ABC',             series: 'ABC Learning Series',   ages: '1-5', pages: '114', url: 'https://www.amazon.com/dp/B0H7RPKQWG' }
+      { title: 'Dot Markers Activity Book — Animals',        series: 'Jungle Animals Series', ages: '2+', pages: '108', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0D83CZ2GT' },
+      { title: 'Dot Markers Activity Book — ABC Favorite Things', series: 'ABC Learning Series', ages: '1-5', pages: '114', url: 'https://www.amazon.com/dp/B0H7RPKQWG' }
     ];
     function exportBookList() {
       var csv = ['Title,Series,Ages,Pages,Amazon URL'].concat(BOOKS.map(function(b) {

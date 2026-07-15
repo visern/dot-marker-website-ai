@@ -1,4 +1,4 @@
-# Dot Markers Activity Book — Jungle Animals
+# Dot Markers Activity Book — Animals
 
 Part of the Jungle Animals Series, this is the sequel to the original
 "Dot Markers Activity Book — Ocean Animals" book — a 108-page collection of 54 animal-themed
