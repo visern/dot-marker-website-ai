@@ -20,13 +20,10 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-3.5-flash';
 const TOP_K = 2;
 // Below this cosine similarity, a chunk is treated as unrelated to the
-// question rather than padded in just to fill TOP_K. Set deliberately high:
-// at 0.90, only near-verbatim matches pass, so most questions will retrieve
-// zero Context chunks and the model answers from the Product Database alone.
-// Worth spot-checking against real questions once traffic exists — lower
-// this if narrative questions ("tell me about X", "does it have a llama")
-// start getting "I'm not sure" instead of pulling from knowledge/books/*.md.
-const MIN_SIMILARITY_SCORE = 0.9;
+// question rather than padded in just to fill TOP_K. An empirical starting
+// point, not a calibrated value — retrieval quality is worth spot-checking
+// against real questions once traffic exists, and adjusting from here.
+const MIN_SIMILARITY_SCORE = 0.3;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_HISTORY_TURNS = 6;
 

@@ -46,11 +46,8 @@ knowledge/
   narrow question can retrieve zero context chunks rather than padding the
   prompt with the closest-available-but-still-unrelated one — the model
   still gets the full Product Database either way. `MIN_SIMILARITY_SCORE`
-  is set high (0.9), so most questions retrieve zero Context and the model
-  answers from the Product Database alone — worth revisiting against real
-  questions once there's traffic to look at, especially if narrative
-  questions start getting "I'm not sure" instead of pulling from
-  `knowledge/books|site/*.md`. `vercel.json` explicitly
+  is an untuned starting point (0.3), worth revisiting against real
+  questions once there's traffic to look at. `vercel.json` explicitly
   bundles `data/**` into this function via `functions.includeFiles`, since
   the file path is built at runtime and Vercel's automatic bundler can't
   always detect it. Generation retries a couple of times on transient
