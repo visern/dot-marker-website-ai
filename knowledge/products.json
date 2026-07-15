@@ -1,7 +1,7 @@
 [
   {
     "id": "abc",
-    "title": "Dot Markers — ABC",
+    "title": "Dot Markers Activity Book — ABC",
     "series": "ABC Learning Series",
     "description": "Big easy dots, alphabet fun! Learn A to Z through dot painting — every letter gets its own bold, colorful page.",
     "minimum_age": 1,
@@ -18,7 +18,7 @@
   },
   {
     "id": "animals",
-    "title": "Dot Markers — Animals",
+    "title": "Dot Markers Activity Book — Ocean Animals",
     "series": "Ocean Animals Series",
     "description": "Sharks, fish, octopus & more! Big dot patterns toddlers can fill with confidence on the very first try.",
     "minimum_age": 2,
@@ -35,7 +35,7 @@
   },
   {
     "id": "jungle",
-    "title": "Dot Markers — Animals Vol. 2",
+    "title": "Dot Markers Activity Book — Jungle Animals",
     "series": "Jungle Animals Series",
     "description": "Sloths, lions, monkeys & more! The jungle sequel kids keep asking for — more animals, more fun.",
     "minimum_age": 2,

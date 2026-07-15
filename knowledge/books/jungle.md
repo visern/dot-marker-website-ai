@@ -1,7 +1,7 @@
-# Dot Markers — Animals Vol. 2
+# Dot Markers Activity Book — Jungle Animals
 
 Part of the Jungle Animals Series, this is the sequel to the original
-"Dot Markers — Animals" book — a 108-page collection of 54 animal-themed
+"Dot Markers Activity Book — Ocean Animals" book — a 108-page collection of 54 animal-themed
 dot marker pages for toddlers and preschoolers ages 1–5.
 
 Spark creativity, learning, and joy — one dot at a time! Step into a

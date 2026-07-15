@@ -1,6 +1,6 @@
-# Dot Markers — Animals
+# Dot Markers Activity Book — Ocean Animals
 
-Make a splash with this "Dot Markers Activity Book Sea Animals"! An
+Make a splash with this "Dot Markers Activity Book — Ocean Animals"! An
 exciting journey beneath the waves, designed especially for preschoolers
 and toddlers — explore over 50 adorable sea creatures, each waiting to be
 brought to life with colorful dots. Big, easy-to-dot designs perfect for

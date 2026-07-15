@@ -1,4 +1,4 @@
-# Dot Markers — ABC
+# Dot Markers Activity Book — ABC
 
 Watch your little one light up with every dot! This Dot Markers Activity
 Book turns learning the ABCs into joyful, mess-free fun that toddlers and

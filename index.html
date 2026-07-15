@@ -239,8 +239,6 @@
 
     .book-chip { position: absolute; top: 10px; left: 10px; color: #fff; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; }
     .chip-new  { background: var(--red); }
-    .chip-teal { background: var(--teal); }
-    .chip-lime { background: var(--lime-dark); }
     .chip-forest { background: var(--forest); }
 
     .book-rating { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 700; color: var(--orange); }
@@ -533,9 +531,9 @@
         <span class="splash" style="width:35px;height:35px;background:var(--purple);opacity:0.3;top:20%;right:15px"></span>
       </div>
       <div class="book-fan">
-        <div class="fan-item"><img src="images/dot-markers-abc.png" alt="Dot Markers ABC Activity Book" /></div>
-        <div class="fan-item"><img src="images/dot-markers-animals-vol-2.jpg" alt="Animals Vol 2" /></div>
-        <div class="fan-item"><img src="images/dot-markers-animals.jpg" alt="Ocean Animals Vol 1" /></div>
+        <div class="fan-item"><img src="images/dot-markers-abc.png" alt="Dot Markers Activity Book — ABC" /></div>
+        <div class="fan-item"><img src="images/dot-markers-animals-vol-2.jpg" alt="Dot Markers Activity Book — Jungle Animals" /></div>
+        <div class="fan-item"><img src="images/dot-markers-animals.jpg" alt="Dot Markers Activity Book — Ocean Animals" /></div>
       </div>
       <div class="hero-badge badge-top badge-proof">
         <span class="badge-proof-star">★</span>
@@ -610,12 +608,11 @@
 
         <article class="book-card reveal">
           <div class="book-img-wrap">
-            <img src="images/dot-markers-animals-vol-2.jpg" alt="Dot Markers Activity Book — Animals Vol. 2" />
-            <span class="book-chip chip-lime">Vol. 2</span>
+            <img src="images/dot-markers-animals-vol-2.jpg" alt="Dot Markers Activity Book — Jungle Animals" />
           </div>
           <div class="book-body">
             <div class="book-series s-lime">Jungle Animals Series</div>
-            <h3 class="book-title">Dot Markers — Animals Vol. 2</h3>
+            <h3 class="book-title">Dot Markers Activity Book — Jungle Animals</h3>
             <div class="book-rating">★★★★★ <span style="color:var(--navy2);opacity:.6;font-size:.75rem;font-weight:700">4.7 · 92 reviews</span></div>
             <p class="book-desc">Sloths, lions, monkeys & more! The jungle sequel kids keep asking for — more animals, more fun.</p>
             <div class="book-meta"><span>108 pages</span><span>•</span><span>Ages 2+</span><span>•</span><span>Paperback</span></div>
@@ -629,11 +626,10 @@
         <article class="book-card reveal reveal-delay-1">
           <div class="book-img-wrap">
             <img src="images/dot-markers-animals.jpg" alt="Dot Markers Activity Book — Ocean Animals" />
-            <span class="book-chip chip-teal">Vol. 1</span>
           </div>
           <div class="book-body">
             <div class="book-series s-teal">Ocean Animals Series</div>
-            <h3 class="book-title">Dot Markers — Animals</h3>
+            <h3 class="book-title">Dot Markers Activity Book — Ocean Animals</h3>
             <div class="book-rating">★★★★★ <span style="color:var(--navy2);opacity:.6;font-size:.75rem;font-weight:700">4.6 · 11 reviews</span></div>
             <p class="book-desc">Sharks, fish, octopus & more! Big dot patterns toddlers can fill with confidence on the very first try.</p>
             <div class="book-meta"><span>98 pages</span><span>•</span><span>Ages 2+</span><span>•</span><span>Paperback</span></div>
@@ -645,12 +641,12 @@
 
         <article class="book-card reveal reveal-delay-2">
           <div class="book-img-wrap">
-            <img src="images/dot-markers-abc.png" alt="Dot Markers ABC Activity Book" />
+            <img src="images/dot-markers-abc.png" alt="Dot Markers Activity Book — ABC" />
             <span class="book-chip chip-new">New!</span>
           </div>
           <div class="book-body">
             <div class="book-series s-forest">ABC Learning Series</div>
-            <h3 class="book-title">Dot Markers — ABC</h3>
+            <h3 class="book-title">Dot Markers Activity Book — ABC</h3>
             <div class="book-rating"><span style="color:var(--forest);font-size:.78rem;font-weight:800;letter-spacing:.04em">✦ Just Launched — Be the First to Review</span></div>
             <p class="book-desc">Big easy dots, alphabet fun! Learn A to Z through dot painting — every letter gets its own bold, colorful page.</p>
             <div class="book-meta"><span>114 pages</span><span>•</span><span>Ages 1–5</span><span>•</span><span>Paperback</span></div>
@@ -926,9 +922,9 @@
 
     // CSV export
     var BOOKS = [
-      { title: 'Dot Markers Activity Book — Animals (Vol. 1)', series: 'Ocean Animals Series', ages: '2+', pages: '98', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3' },
-      { title: 'Dot Markers Activity Book — Animals Vol. 2',   series: 'Jungle Animals Series', ages: '2+', pages: '108', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0D83CZ2GT' },
-      { title: 'Dot Markers ABC Activity Book',                series: 'ABC Learning Series',   ages: '1-5', pages: '114', url: 'https://www.amazon.com/dp/B0H7RPKQWG' }
+      { title: 'Dot Markers Activity Book — Ocean Animals',  series: 'Ocean Animals Series',  ages: '2+', pages: '98',  url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3' },
+      { title: 'Dot Markers Activity Book — Jungle Animals', series: 'Jungle Animals Series', ages: '2+', pages: '108', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0D83CZ2GT' },
+      { title: 'Dot Markers Activity Book — ABC',             series: 'ABC Learning Series',   ages: '1-5', pages: '114', url: 'https://www.amazon.com/dp/B0H7RPKQWG' }
     ];
     function exportBookList() {
       var csv = ['Title,Series,Ages,Pages,Amazon URL'].concat(BOOKS.map(function(b) {
