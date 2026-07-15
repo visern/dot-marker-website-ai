@@ -10,9 +10,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_EMBED_MODEL = 'gemini-embedding-001';
-const EMBED_BATCH_SIZE = 90;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_EMBED_MODEL = 'nomic-embed-text-v1_5';
 
 const KNOWLEDGE_DIR = path.join(__dirname, '..', 'knowledge');
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -37,64 +36,38 @@ function readMarkdownChunks(subdir, source) {
 }
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// Google's free-tier embedding quota is per-minute, and appears to count
-// each item inside a batchEmbedContents call toward it (not just the API
-// call itself) - so sending batches back-to-back can exceed it even though
-// each individual call is well under the batch size limit. On a 429, Google
-// tells us exactly how long to wait via RetryInfo.retryDelay; honor that
-// (with a sane fallback) instead of failing the whole build.
 const MAX_EMBED_RETRIES = 5;
-const DEFAULT_RETRY_DELAY_MS = 60_000;
+const RETRY_DELAY_MS = 5_000;
 
-async function embedBatch(texts, attempt = 1) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_EMBED_MODEL}:batchEmbedContents`;
-  const res = await fetch(url, {
+async function embedAll(chunks, attempt = 1) {
+  const texts = chunks.map((c) => `${c.title}\n${c.text}`);
+  const res = await fetch('https://api.groq.com/openai/v1/embeddings', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
-    body: JSON.stringify({
-      requests: texts.map((text) => ({
-        model: `models/${GEMINI_EMBED_MODEL}`,
-        content: { parts: [{ text }] },
-        taskType: 'RETRIEVAL_DOCUMENT',
-      })),
-    }),
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_API_KEY}` },
+    body: JSON.stringify({ model: GROQ_EMBED_MODEL, input: texts }),
   });
 
-  if (res.status === 429 && attempt < MAX_EMBED_RETRIES) {
-    const body = await res.text();
-    let delayMs = DEFAULT_RETRY_DELAY_MS;
-    const match = body.match(/"retryDelay":\s*"(\d+)s"/);
-    if (match) delayMs = Number(match[1]) * 1000 + 2000; // pad 2s past what Google asked for
-    console.log(`  Rate limited embedding batch (attempt ${attempt}/${MAX_EMBED_RETRIES}), waiting ${Math.round(delayMs / 1000)}s...`);
-    await sleep(delayMs);
-    return embedBatch(texts, attempt + 1);
+  if ((res.status === 429 || res.status === 503) && attempt < MAX_EMBED_RETRIES) {
+    console.log(`  Rate limited/unavailable embedding batch (attempt ${attempt}/${MAX_EMBED_RETRIES}), waiting ${RETRY_DELAY_MS / 1000}s...`);
+    await sleep(RETRY_DELAY_MS);
+    return embedAll(chunks, attempt + 1);
   }
 
   if (!res.ok) {
-    throw new Error(`Gemini API error ${res.status}: ${await res.text()}`);
+    throw new Error(`Groq API error ${res.status}: ${await res.text()}`);
   }
   const data = await res.json();
-  return data.embeddings.map((e) => e.values);
-}
-
-async function embedAll(chunks) {
-  const embeddings = [];
-  for (let i = 0; i < chunks.length; i += EMBED_BATCH_SIZE) {
-    const batch = chunks.slice(i, i + EMBED_BATCH_SIZE);
-    console.log(`Embedding chunks ${i + 1}-${i + batch.length} of ${chunks.length}...`);
-    const texts = batch.map((c) => `${c.title}\n${c.text}`);
-    embeddings.push(...(await embedBatch(texts)));
-    // Pace ourselves between batches so consecutive batches don't cumulatively
-    // exceed the free tier's per-minute quota even without hitting a 429 first.
-    if (i + EMBED_BATCH_SIZE < chunks.length) await sleep(65_000);
-  }
-  return embeddings;
+  // Groq returns each embedding tagged with its input index, not necessarily
+  // in request order, so sort back into request order before zipping with chunks.
+  return data.data
+    .slice()
+    .sort((a, b) => a.index - b.index)
+    .map((e) => e.embedding);
 }
 
 async function main() {
-  if (!GEMINI_API_KEY) {
-    console.error('Missing GEMINI_API_KEY environment variable.');
+  if (!GROQ_API_KEY) {
+    console.error('Missing GROQ_API_KEY environment variable.');
     process.exit(1);
   }
 
@@ -111,13 +84,13 @@ async function main() {
     ...readMarkdownChunks('site', 'site'),
   ];
 
-  console.log(`Embedding ${chunks.length} chunks with ${GEMINI_EMBED_MODEL}...`);
+  console.log(`Embedding ${chunks.length} chunks with ${GROQ_EMBED_MODEL}...`);
   const embeddings = await embedAll(chunks);
 
   const records = chunks.map((chunk, i) => ({ ...chunk, embedding: embeddings[i] }));
   fs.writeFileSync(
     path.join(DATA_DIR, 'embeddings.json'),
-    JSON.stringify({ model: GEMINI_EMBED_MODEL, records }, null, 2)
+    JSON.stringify({ model: GROQ_EMBED_MODEL, records }, null, 2)
   );
   console.log(`Wrote ${records.length} embeddings to data/embeddings.json`);
 }
