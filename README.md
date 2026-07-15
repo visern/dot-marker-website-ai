@@ -38,14 +38,20 @@ knowledge/
   regenerated fresh each deploy.
 - **`api/chat.js`** — on each message: embeds the visitor's question with
   Groq (`nomic-embed-text-v1_5`), finds the most relevant chunks from
-  `data/embeddings.json` (cosine similarity), and sends Groq
+  `data/embeddings.json` (cosine similarity, keeping only chunks scoring at
+  least `MIN_SIMILARITY_SCORE`, capped at the top `TOP_K`), and sends Groq
   (`llama-3.3-70b-versatile`) both the full Product Database and the
   retrieved Context, with the system prompt explaining which one answers
-  which kind of question. `vercel.json` explicitly bundles `data/**` into
-  this function via `functions.includeFiles`, since the file path is built
-  at runtime and Vercel's automatic bundler can't always detect it.
-  Generation retries a couple of times on transient 503/429s before
-  erroring out.
+  which kind of question. The similarity floor means an off-topic or
+  narrow question can retrieve zero context chunks rather than padding the
+  prompt with the closest-available-but-still-unrelated one — the model
+  still gets the full Product Database either way. `MIN_SIMILARITY_SCORE`
+  is an untuned starting point (0.3), worth revisiting against real
+  questions once there's traffic to look at. `vercel.json` explicitly
+  bundles `data/**` into this function via `functions.includeFiles`, since
+  the file path is built at runtime and Vercel's automatic bundler can't
+  always detect it. Generation retries a couple of times on transient
+  503/429s before erroring out.
 - **Generation fallback**: if Groq generation is still failing after its own
   retries (a sustained outage, not a blip), and `GEMINI_API_KEY` is set,
   `api/chat.js` falls back to Gemini (`gemini-3.5-flash`) for that reply

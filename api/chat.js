@@ -18,7 +18,12 @@ const GROQ_CHAT_MODEL = process.env.GROQ_CHAT_MODEL || 'llama-3.3-70b-versatile'
 // as an error even with GEMINI_API_KEY set.
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-3.5-flash';
-const TOP_K = 6;
+const TOP_K = 2;
+// Below this cosine similarity, a chunk is treated as unrelated to the
+// question rather than padded in just to fill TOP_K. An empirical starting
+// point, not a calibrated value — retrieval quality is worth spot-checking
+// against real questions once traffic exists, and adjusting from here.
+const MIN_SIMILARITY_SCORE = 0.3;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_HISTORY_TURNS = 6;
 
@@ -194,7 +199,7 @@ function retrieveContext(queryEmbedding, records) {
     score: cosineSimilarity(queryEmbedding, r.embedding),
   }));
   scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, TOP_K);
+  return scored.filter((r) => r.score >= MIN_SIMILARITY_SCORE).slice(0, TOP_K);
 }
 
 const SYSTEM_PROMPT = `You are the friendly customer-support chat assistant for Dot Marker Books (veronikadaves.com), a small business selling screen-free dot marker activity books for toddlers and preschoolers.
