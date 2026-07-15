@@ -46,6 +46,16 @@ knowledge/
   at runtime and Vercel's automatic bundler can't always detect it.
   Generation retries a couple of times on transient 503/429s before
   erroring out.
+- **Reply cache**: the first message of a conversation is cached in Redis for
+  1 hour, keyed by the normalized question text (case/whitespace-insensitive
+  exact match, not semantic). A repeated FAQ-style question ("how many
+  pages", "what ages") skips both Groq calls entirely and returns instantly.
+  Follow-up messages (anything with prior conversation history) always skip
+  the cache, since their correct answer depends on what was said earlier,
+  not just the latest message on its own. This matters because Groq's free
+  tier caps out at 1,000 requests/day and every uncached message costs 2 of
+  them (embed + generate) — same fail-open behavior as rate limiting if
+  Redis isn't configured.
 - The chat widget (bottom-right bubble) is inlined in `index.html` and calls `/api/chat`.
 - Per-IP rate limiting: `/api/chat` caps each IP to 10 messages/minute using a sliding-window
   counter in Redis (see below). This is a crude backstop against scripted abuse of the free

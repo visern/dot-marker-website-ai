@@ -3,6 +3,7 @@
 // -> { reply: string }
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_EMBED_MODEL = 'nomic-embed-text-v1_5';
@@ -17,6 +18,12 @@ const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_
 const REDIS_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 10;
+// How long a cached reply stays valid. A tradeoff, not a correctness
+// guarantee: knowledge/ content changes take effect on redeploy, but Redis
+// is a separate store from the deployment, so a stale cached answer could
+// outlive a content update by up to this long. An hour keeps that window
+// short without caching so briefly it barely helps against Groq's daily quota.
+const CACHE_TTL_SECONDS = 3600;
 
 function getClientIp(req) {
   const forwarded = req.headers['x-forwarded-for'];
@@ -64,6 +71,60 @@ async function checkRateLimit(ip) {
   } catch (err) {
     console.error('Rate limit check errored:', err);
     return true;
+  }
+}
+
+// Only exact-ish repeats of the same standalone question are worth caching —
+// collapse casing/whitespace differences so "How many pages?" and "how many
+// pages??" hit the same entry, without attempting real semantic dedup here
+// (that's what the embedding search already does downstream).
+function normalizeQuestion(text) {
+  return text.trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function cacheKeyFor(message) {
+  const hash = crypto.createHash('sha256').update(normalizeQuestion(message)).digest('hex');
+  return `chatcache:${hash}`;
+}
+
+// Reply cache, keyed by normalized question text. Only ever used for the
+// first message of a conversation (see the handler below) — a follow-up
+// question's answer depends on prior turns, so it isn't safe to serve from
+// a cache keyed only on the latest message. Fails open (skips the cache) if
+// Redis isn't configured or errors, same as checkRateLimit.
+async function getCachedReply(key) {
+  if (!REDIS_URL || !REDIS_TOKEN) return null;
+  try {
+    const res = await fetch(`${REDIS_URL}/pipeline`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${REDIS_TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify([['GET', key]]),
+    });
+    if (!res.ok) {
+      console.error(`Cache read failed: ${res.status} ${await res.text()}`);
+      return null;
+    }
+    const results = await res.json();
+    return (results[0] && results[0].result) || null;
+  } catch (err) {
+    console.error('Cache read errored:', err);
+    return null;
+  }
+}
+
+async function setCachedReply(key, reply) {
+  if (!REDIS_URL || !REDIS_TOKEN) return;
+  try {
+    const res = await fetch(`${REDIS_URL}/pipeline`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${REDIS_TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify([['SET', key, reply, 'EX', CACHE_TTL_SECONDS]]),
+    });
+    if (!res.ok) {
+      console.error(`Cache write failed: ${res.status} ${await res.text()}`);
+    }
+  } catch (err) {
+    console.error('Cache write errored:', err);
   }
 }
 
@@ -213,12 +274,30 @@ module.exports = async (req, res) => {
         .map((m) => ({ role: m.role, content: m.text.slice(0, MAX_MESSAGE_LENGTH) }))
     : [];
 
+  // Only cache/lookup on the first message of a conversation — a follow-up's
+  // correct answer depends on the prior turns, not just its own text, so
+  // caching by message text alone would risk serving a wrong reply.
+  const cacheKey = safeHistory.length === 0 ? cacheKeyFor(message) : null;
+
   try {
+    if (cacheKey) {
+      const cached = await getCachedReply(cacheKey);
+      if (cached) {
+        res.status(200).json({ reply: cached });
+        return;
+      }
+    }
+
     const products = loadProducts();
     const records = loadRecords();
     const queryEmbedding = await embedQuery(message);
     const context = retrieveContext(queryEmbedding, records);
     const reply = await callGroq(message, safeHistory, products, context);
+
+    if (cacheKey) {
+      await setCachedReply(cacheKey, reply);
+    }
+
     res.status(200).json({ reply });
   } catch (err) {
     console.error(err);
