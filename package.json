@@ -5,9 +5,13 @@
   "description": "Dot Marker Books website with a RAG chat widget",
   "scripts": {
     "ingest": "node scripts/ingest.js",
-    "sync-knowledge": "node scripts/sync-knowledge.js"
+    "sync-knowledge": "node scripts/sync-knowledge.js",
+    "eval": "node eval/langsmith-eval.js"
   },
   "engines": {
     "node": "24.x"
+  },
+  "devDependencies": {
+    "langsmith": "^0.8.3"
   }
 }

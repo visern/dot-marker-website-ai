@@ -126,3 +126,26 @@ For local development, copy `.env.example` to `.env`, fill in the key, and run
 
 In every case, just redeploy — ingestion re-runs automatically as part of
 the Vercel build. No manual embedding step or commit needed.
+
+## Evaluating chat quality
+
+`npm run eval` (`eval/langsmith-eval.js`) runs the chatbot's answers through
+[LangSmith](https://smith.langchain.com/) as a scored experiment: it seeds a
+small dataset of real questions (page counts, prices, "does it have X,"
+off-topic requests, an unreviewed book's rating), calls the live `/api/chat`
+endpoint for each one, and grades the replies with an LLM-as-judge evaluator
+(via Groq) against this project's actual correctness rules — the same rules
+in `api/chat.js`'s `SYSTEM_PROMPT` (never invent a fact, decline what you
+don't know, stay on topic). Full per-question scores and comments show up in
+the LangSmith UI.
+
+This is a local, manual dev tool — `langsmith` is a `devDependency` only, so
+the deployed site and function stay dependency-free. Requires
+`LANGSMITH_API_KEY` and `GROQ_API_KEY` (see `.env.example`); point
+`CHAT_ENDPOINT_URL` at a deployed URL instead of `localhost:3000` to
+evaluate a real deployment rather than a local dev server.
+
+`eval/deepeval-criteria.md` documents the same underlying rubric written for
+DeepEval (a Python framework) — kept as reference/rationale for *why* these
+specific rules matter, even though the runnable version ended up built on
+LangSmith instead.

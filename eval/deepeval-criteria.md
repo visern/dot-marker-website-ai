@@ -1,5 +1,10 @@
 # DeepEval criteria for the Dot Marker Books chatbot
 
+> **The runnable version of this eval lives in `eval/langsmith-eval.js`**
+> (`npm run eval`), built on LangSmith instead of DeepEval. This file is kept
+> as reference for the underlying rubric/rationale — the actual rules below
+> are the same ones encoded as the LangSmith judge prompt.
+
 Reference material for evaluating `/api/chat` responses with
 [DeepEval](https://docs.confident-ai.com/), specifically its `GEval` metric
 (an LLM-as-judge scored against a criteria prompt). **Not wired into this
