@@ -6,24 +6,32 @@ const path = require('path');
 const crypto = require('crypto');
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
-const GROQ_EMBED_MODEL = 'nomic-embed-text-v1_5';
 const GROQ_CHAT_MODEL = process.env.GROQ_CHAT_MODEL || 'llama-3.3-70b-versatile';
-// Fallback provider used only if Groq's own generation retries (below) are
-// exhausted, e.g. a sustained outage rather than a brief blip. Optional: if
-// GEMINI_API_KEY isn't set, the fallback is simply skipped and Groq's own
-// error is returned. This only covers generation, not embeddings/retrieval —
-// Gemini's embedding vectors live in a different, incompatible vector space
-// than the nomic-embed-text-v1_5 vectors already stored in
-// data/embeddings.json, so a Groq embedding-endpoint outage still surfaces
-// as an error even with GEMINI_API_KEY set.
+// Groq has no embeddings API (verified against their model list, docs, and
+// pricing page — text generation/speech only), so embeddings always go
+// through Gemini regardless of which provider generates the reply. This
+// makes GEMINI_API_KEY required, not optional, unlike GEMINI_CHAT_MODEL
+// below which only matters for the generation fallback.
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_EMBED_MODEL = 'gemini-embedding-001';
+// Fallback generation provider used only if Groq's own generation retries
+// (below) are exhausted, e.g. a sustained outage rather than a brief blip.
 const GEMINI_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-3.5-flash';
-const TOP_K = 3;
+// 4, not 3: eval/retrieval-quality.js showed gemini-embedding-001 cosine
+// scores across this corpus's 10 chunks cluster tightly (~0.65-0.79 spread),
+// so a genuinely relevant chunk can land just outside a tighter top-K by a
+// thin margin (e.g. site-about at rank 4, 0.0037 below rank 3). One extra
+// chunk per request is cheap insurance against that clustering.
+const TOP_K = 4;
 // Below this cosine similarity, a chunk is treated as unrelated to the
-// question rather than padded in just to fill TOP_K. An empirical starting
-// point, not a calibrated value — retrieval quality is worth spot-checking
-// against real questions once traffic exists, and adjusting from here.
-const MIN_SIMILARITY_SCORE = 0.3;
+// question rather than padded in just to fill TOP_K. Calibrated against
+// eval/retrieval-quality.js's 12 test questions: the 10 on-topic questions'
+// best-matching chunk scored 0.69-0.79, while the 2 off-topic ones scored
+// 0.50 and 0.61 — 0.65 sits in that gap with margin both ways. The old 0.3
+// did nothing in practice (no chunk in this corpus ever scored that low).
+// Still only 2 off-topic samples, so revisit if real off-topic traffic
+// starts leaking through above this floor.
+const MIN_SIMILARITY_SCORE = 0.65;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_HISTORY_TURNS = 6;
 
@@ -181,16 +189,21 @@ function cosineSimilarity(a, b) {
 }
 
 async function embedQuery(text) {
-  const res = await fetch('https://api.groq.com/openai/v1/embeddings', {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_EMBED_MODEL}:embedContent`;
+  const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_API_KEY}` },
-    body: JSON.stringify({ model: GROQ_EMBED_MODEL, input: text }),
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+    body: JSON.stringify({
+      model: `models/${GEMINI_EMBED_MODEL}`,
+      content: { parts: [{ text }] },
+      taskType: 'RETRIEVAL_QUERY',
+    }),
   });
   if (!res.ok) {
-    throw new Error(`Groq API error ${res.status}: ${await res.text()}`);
+    throw new Error(`Gemini API error ${res.status}: ${await res.text()}`);
   }
   const data = await res.json();
-  return data.data[0].embedding;
+  return data.embedding.values;
 }
 
 function retrieveContext(queryEmbedding, records) {
@@ -301,12 +314,12 @@ async function generateReply(message, history, products, context) {
   }
 }
 
-module.exports = async (req, res) => {
+const handler = async (req, res) => {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
-  if (!GROQ_API_KEY) {
+  if (!GROQ_API_KEY || !GEMINI_API_KEY) {
     res.status(500).json({ error: 'Server is missing API credentials.' });
     return;
   }
@@ -364,3 +377,12 @@ module.exports = async (req, res) => {
     res.status(500).json({ error: 'Something went wrong generating a reply.' });
   }
 };
+
+module.exports = handler;
+// Exposed for eval/retrieval-quality.js, so it exercises the exact same
+// retrieval code the deployed function runs rather than a re-implementation
+// that could drift out of sync. Vercel only ever calls module.exports
+// itself as (req, res), so these extra properties are inert in production.
+module.exports.embedQuery = embedQuery;
+module.exports.retrieveContext = retrieveContext;
+module.exports.loadRecords = loadRecords;

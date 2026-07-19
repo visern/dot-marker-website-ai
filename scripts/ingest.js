@@ -11,7 +11,11 @@ const fs = require('fs');
 const path = require('path');
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
-const GROQ_EMBED_MODEL = 'nomic-embed-text-v1_5';
+// Groq has no embeddings API (verified against their model list, docs, and
+// pricing page — text generation/speech only), so embeddings use Gemini
+// while Groq stays the chat generation provider (see api/chat.js).
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_EMBED_MODEL = 'gemini-embedding-001';
 
 const KNOWLEDGE_DIR = path.join(__dirname, '..', 'knowledge');
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -40,11 +44,16 @@ const MAX_EMBED_RETRIES = 5;
 const RETRY_DELAY_MS = 5_000;
 
 async function embedAll(chunks, attempt = 1) {
-  const texts = chunks.map((c) => `${c.title}\n${c.text}`);
-  const res = await fetch('https://api.groq.com/openai/v1/embeddings', {
+  const requests = chunks.map((c) => ({
+    model: `models/${GEMINI_EMBED_MODEL}`,
+    content: { parts: [{ text: `${c.title}\n${c.text}` }] },
+    taskType: 'RETRIEVAL_DOCUMENT',
+  }));
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_EMBED_MODEL}:batchEmbedContents`;
+  const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_API_KEY}` },
-    body: JSON.stringify({ model: GROQ_EMBED_MODEL, input: texts }),
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+    body: JSON.stringify({ requests }),
   });
 
   if ((res.status === 429 || res.status === 503) && attempt < MAX_EMBED_RETRIES) {
@@ -54,20 +63,19 @@ async function embedAll(chunks, attempt = 1) {
   }
 
   if (!res.ok) {
-    throw new Error(`Groq API error ${res.status}: ${await res.text()}`);
+    throw new Error(`Gemini API error ${res.status}: ${await res.text()}`);
   }
   const data = await res.json();
-  // Groq returns each embedding tagged with its input index, not necessarily
-  // in request order, so sort back into request order before zipping with chunks.
-  return data.data
-    .slice()
-    .sort((a, b) => a.index - b.index)
-    .map((e) => e.embedding);
+  return data.embeddings.map((e) => e.values);
 }
 
 async function main() {
   if (!GROQ_API_KEY) {
     console.error('Missing GROQ_API_KEY environment variable.');
+    process.exit(1);
+  }
+  if (!GEMINI_API_KEY) {
+    console.error('Missing GEMINI_API_KEY environment variable (used for embeddings — Groq has no embeddings API).');
     process.exit(1);
   }
 
@@ -84,13 +92,13 @@ async function main() {
     ...readMarkdownChunks('site', 'site'),
   ];
 
-  console.log(`Embedding ${chunks.length} chunks with ${GROQ_EMBED_MODEL}...`);
+  console.log(`Embedding ${chunks.length} chunks with ${GEMINI_EMBED_MODEL}...`);
   const embeddings = await embedAll(chunks);
 
   const records = chunks.map((chunk, i) => ({ ...chunk, embedding: embeddings[i] }));
   fs.writeFileSync(
     path.join(DATA_DIR, 'embeddings.json'),
-    JSON.stringify({ model: GROQ_EMBED_MODEL, records }, null, 2)
+    JSON.stringify({ model: GEMINI_EMBED_MODEL, records }, null, 2)
   );
   console.log(`Wrote ${records.length} embeddings to data/embeddings.json`);
 }

@@ -6,7 +6,8 @@
   "scripts": {
     "ingest": "node scripts/ingest.js",
     "sync-knowledge": "node scripts/sync-knowledge.js",
-    "eval": "node eval/langsmith-eval.js"
+    "eval": "node eval/langsmith-eval.js",
+    "eval:retrieval": "node eval/retrieval-quality.js"
   },
   "engines": {
     "node": "24.x"
