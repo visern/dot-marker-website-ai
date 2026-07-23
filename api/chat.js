@@ -283,23 +283,43 @@ async function callGemini(message, history, products, context) {
   ];
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_CHAT_MODEL}:generateContent`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-      contents,
-      generationConfig: { maxOutputTokens: 400 },
-    }),
+  const body = JSON.stringify({
+    systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+    contents,
+    // gemini-3.5-flash is a thinking-capable model: without
+    // thinkingBudget: 0, its invisible reasoning tokens eat most of
+    // maxOutputTokens before the actual reply starts, truncating ordinary
+    // replies mid-sentence (finishReason MAX_TOKENS with thoughtsTokenCount
+    // ~380/400 observed in practice). Thinking has no real benefit for
+    // this task, so disable it outright.
+    generationConfig: { maxOutputTokens: 400, thinkingConfig: { thinkingBudget: 0 } },
   });
-  if (!res.ok) {
-    throw new Error(`Gemini API error ${res.status}: ${await res.text()}`);
+
+  // Gemini only ever runs as the fallback once Groq's own retries are
+  // exhausted (see generateReply below) — a single-shot failure here with
+  // no retry of its own would mean a transient Gemini blip during a Groq
+  // outage takes the whole reply down with no recourse left. Mirrors
+  // callGroq's retry shape above.
+  let lastError;
+  for (let attempt = 1; attempt <= MAX_GENERATE_RETRIES; attempt++) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+      body,
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const parts = data.candidates && data.candidates[0] && data.candidates[0].content
+        ? data.candidates[0].content.parts
+        : [];
+      return parts.map((p) => p.text || '').join('').trim();
+    }
+    lastError = new Error(`Gemini API error ${res.status}: ${await res.text()}`);
+    const retryable = res.status === 503 || res.status === 429;
+    if (!retryable || attempt === MAX_GENERATE_RETRIES) break;
+    await sleep(GENERATE_RETRY_DELAYS_MS[attempt - 1]);
   }
-  const data = await res.json();
-  const parts = data.candidates && data.candidates[0] && data.candidates[0].content
-    ? data.candidates[0].content.parts
-    : [];
-  return parts.map((p) => p.text || '').join('').trim();
+  throw lastError;
 }
 
 // Groq is the primary generator; Gemini only steps in once Groq's own
