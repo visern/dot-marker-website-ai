@@ -447,6 +447,15 @@
     .chat-msg.user { align-self: flex-end; background: var(--teal); color: #fff; border-bottom-right-radius: 4px; }
     .chat-msg.bot { align-self: flex-start; background: #fff; color: var(--navy); border: 1px solid rgba(38,181,175,0.15); border-bottom-left-radius: 4px; }
     .chat-msg.bot.error { color: var(--red-dark); }
+    .chat-msg.bot a { color: var(--teal); font-weight: 600; }
+    .chat-feedback { align-self: flex-start; display: flex; gap: 0.4rem; margin-top: -0.35rem; }
+    .chat-feedback button {
+      background: none; border: none; cursor: pointer; font-size: 0.85rem;
+      opacity: 0.45; padding: 0.1rem 0.3rem; line-height: 1; transition: opacity 0.15s;
+    }
+    .chat-feedback button:hover { opacity: 0.8; }
+    .chat-feedback button.voted { opacity: 1; }
+    .chat-feedback button:disabled { cursor: default; }
     .chat-form { display: flex; gap: 0.5rem; padding: 0.75rem; border-top: 1.5px solid rgba(38,181,175,0.1); background: #fff; }
     .chat-form input {
       flex: 1; padding: 0.6rem 0.9rem; border: 2px solid rgba(38,181,175,0.15); border-radius: 100px;
@@ -1036,15 +1045,115 @@
       var closeBtn = document.getElementById('chatClose');
       var history = [];
       var greeted = false;
+      // One id per page load, shared by every event fired during this chat
+      // session, so PostHog can group "how many follow-ups / helpful votes
+      // per conversation" rather than just per-message.
+      var conversationId = 'chat_' + Date.now() + '_' + Math.random().toString(36).slice(2);
 
-      function addMessage(text, role, isError) {
+      function escapeHtml(text) {
         var div = document.createElement('div');
-        div.className = 'chat-msg ' + role + (isError ? ' error' : '');
         div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Bot replies are rendered as HTML (not textContent) so purchase
+      // links the model mentions are actually clickable — text is
+      // HTML-escaped first, then only recognized URL substrings are
+      // turned into <a> tags, so this stays safe against any HTML the
+      // model itself might emit.
+      function linkify(text) {
+        var escaped = escapeHtml(text);
+        return escaped.replace(/(https?:\/\/[^\s<]+)/g, function (url) {
+          // The regex above is greedy about what counts as "URL", so a
+          // sentence-ending period/comma/etc. right after the link gets
+          // swallowed into the href otherwise (seen in practice: a real
+          // reply ending "...dp/B0H7RPKQWG." linkified the trailing
+          // period into the URL). Strip trailing punctuation back out.
+          var trailing = '';
+          var match = /[.,;:!?)\]}'"]+$/.exec(url);
+          if (match) {
+            trailing = match[0];
+            url = url.slice(0, url.length - trailing.length);
+          }
+          // escapeHtml above only covers &/</> (per the HTML fragment
+          // serialization spec, text-node escaping never touches quotes —
+          // verified: div.textContent = '"'; div.innerHTML is a literal
+          // unescaped '"'). The url text itself is safe to display as-is
+          // at this point, but it's about to go inside a double-quoted
+          // href="..." attribute via string concatenation, so a literal
+          // '"' here would break out of the attribute — escape it
+          // specifically for that context.
+          var hrefValue = url.replace(/"/g, '&quot;');
+          return '<a href="' + hrefValue + '" target="_blank" rel="noopener noreferrer">' + url + '</a>' + trailing;
+        });
+      }
+
+      function addMessage(text, role, opts) {
+        opts = opts || {};
+        var div = document.createElement('div');
+        div.className = 'chat-msg ' + role + (opts.isError ? ' error' : '');
+        if (opts.linkify) {
+          div.innerHTML = linkify(text);
+        } else {
+          div.textContent = text;
+        }
         messagesEl.appendChild(div);
         messagesEl.scrollTop = messagesEl.scrollHeight;
         return div;
       }
+
+      // Thumbs up/down under a successful bot reply. Not shown for the
+      // greeting, error messages, or the "…" placeholder — only for real
+      // answers, since those are what "was this helpful" actually grades.
+      function addFeedbackButtons(question, reply, turnIndex) {
+        var div = document.createElement('div');
+        div.className = 'chat-feedback';
+        var up = document.createElement('button');
+        up.type = 'button';
+        up.setAttribute('aria-label', 'Helpful');
+        up.textContent = '👍';
+        var down = document.createElement('button');
+        down.type = 'button';
+        down.setAttribute('aria-label', 'Not helpful');
+        down.textContent = '👎';
+
+        function vote(helpful) {
+          up.disabled = true;
+          down.disabled = true;
+          (helpful ? up : down).classList.add('voted');
+          if (window.posthog) {
+            posthog.capture('chat_reply_feedback', {
+              conversation_id: conversationId,
+              turn_index: turnIndex,
+              helpful: helpful,
+              question: question,
+              reply: reply,
+            });
+          }
+        }
+
+        up.addEventListener('click', function () { vote(true); });
+        down.addEventListener('click', function () { vote(false); });
+        div.appendChild(up);
+        div.appendChild(down);
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      // Event delegation, not a per-message listener: bot messages are
+      // re-rendered on every reply, and this survives that without needing
+      // cleanup. Only bot-message links count as the chatbot actually
+      // driving a click, not any other link that happens to be on the page.
+      messagesEl.addEventListener('click', function (e) {
+        var link = e.target.closest ? e.target.closest('a') : null;
+        if (!link || !messagesEl.contains(link)) return;
+        if (window.posthog) {
+          posthog.capture('chat_link_clicked', {
+            conversation_id: conversationId,
+            url: link.href,
+          });
+        }
+      });
 
       function openPanel() {
         panelEl.classList.add('open');
@@ -1054,7 +1163,7 @@
           greeted = true;
         }
         inputEl.focus();
-        if (window.posthog) posthog.capture('chat_opened');
+        if (window.posthog) posthog.capture('chat_opened', { conversation_id: conversationId });
       }
 
       function closePanel() {
@@ -1072,6 +1181,11 @@
         var text = inputEl.value.trim();
         if (!text) return;
 
+        // Computed before history is mutated below, so it reflects which
+        // turn THIS message is (1 = first message, 2+ = a follow-up) —
+        // each turn adds 2 entries (user + assistant) to history.
+        var turnIndex = Math.floor(history.length / 2) + 1;
+
         addMessage(text, 'user');
         inputEl.value = '';
         inputEl.disabled = true;
@@ -1086,20 +1200,37 @@
           .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; }); })
           .then(function (result) {
             thinking.remove();
-            if (result.ok && result.data.reply) {
-              addMessage(result.data.reply, 'bot');
+            var succeeded = result.ok && !!result.data.reply;
+            if (succeeded) {
+              addMessage(result.data.reply, 'bot', { linkify: true });
+              addFeedbackButtons(text, result.data.reply, turnIndex);
               history.push({ role: 'user', text: text });
               history.push({ role: 'assistant', text: result.data.reply });
             } else if (result.status === 429) {
-              addMessage("You're sending messages a bit fast — please wait a moment and try again.", 'bot', true);
+              addMessage("You're sending messages a bit fast — please wait a moment and try again.", 'bot', { isError: true });
             } else {
-              addMessage("Sorry, I couldn't get an answer just now. Please try again or use the contact form below.", 'bot', true);
+              addMessage("Sorry, I couldn't get an answer just now. Please try again or use the contact form below.", 'bot', { isError: true });
             }
-            if (window.posthog) posthog.capture('chat_message_sent');
+            if (window.posthog) {
+              posthog.capture('chat_message_sent', {
+                conversation_id: conversationId,
+                turn_index: turnIndex,
+                is_followup: turnIndex > 1,
+                ok: succeeded,
+              });
+            }
           })
           .catch(function () {
             thinking.remove();
-            addMessage("Sorry, something went wrong. Please try again or use the contact form below.", 'bot', true);
+            addMessage("Sorry, something went wrong. Please try again or use the contact form below.", 'bot', { isError: true });
+            if (window.posthog) {
+              posthog.capture('chat_message_sent', {
+                conversation_id: conversationId,
+                turn_index: turnIndex,
+                is_followup: turnIndex > 1,
+                ok: false,
+              });
+            }
           })
           .finally(function () {
             inputEl.disabled = false;
