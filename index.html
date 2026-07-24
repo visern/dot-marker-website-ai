@@ -6,20 +6,20 @@
 
   <!-- SEO -->
   <title>Dot Marker Books — Screen-Free Activity Books Kids Actually Love</title>
-  <meta name="description" content="Award-winning dot marker activity books for toddlers and preschoolers ages 1–5. Big dots, bright colors, 50–60 pages. Perfect for screen-free play. Available on Amazon." />
+  <meta name="description" content="Award-winning dot marker activity books for toddlers and preschoolers ages 1–5. Big dots, bright colors, 98–114 pages. Perfect for screen-free play. Available on Amazon." />
   <meta name="keywords" content="dot marker activity book, toddler activity book, preschool coloring book, kids dot art, dot dauber book" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Dot Marker Books — Screen-Free Activity Books Kids Actually Love" />
   <meta property="og:description" content="Big dots. Bright colors. Hours of screen-free fun. Dot marker activity books designed for little hands, ages 1–5. Shop on Amazon." />
-  <meta property="og:image" content="images/Shark-1.jpg" />
+  <meta property="og:image" content="images/dot-markers-animals.jpg" />
   <meta property="og:type" content="website" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Dot Marker Books — Activity Books Kids Love" />
   <meta name="twitter:description" content="Screen-free dot marker activity books for toddlers. Big dots, bright colors, endless fun." />
-  <meta name="twitter:image" content="images/Shark-1.jpg" />
+  <meta name="twitter:image" content="images/dot-markers-animals.jpg" />
 
   <!-- PostHog analytics + A/B testing -->
   <script>
@@ -239,8 +239,6 @@
 
     .book-chip { position: absolute; top: 10px; left: 10px; color: #fff; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; }
     .chip-new  { background: var(--red); }
-    .chip-teal { background: var(--teal); }
-    .chip-lime { background: var(--lime-dark); }
     .chip-forest { background: var(--forest); }
 
     .book-rating { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 700; color: var(--orange); }
@@ -419,6 +417,61 @@
       .nav-links li:not(.nav-cta) { display: none; }
     }
     @media (max-width: 600px) { .section-wrap { padding: 4rem 1.25rem; } }
+
+    /* ── Chat widget ──────────────────────────────────────────── */
+    #chatToggle {
+      position: fixed; bottom: 22px; right: 22px; z-index: 500;
+      width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer;
+      background: var(--teal); color: #fff; font-size: 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 20px rgba(13,43,62,0.25); transition: transform 0.15s, background 0.2s;
+    }
+    #chatToggle:hover { background: var(--teal-dark); transform: translateY(-2px); }
+    #chatPanel {
+      position: fixed; bottom: 96px; right: 22px; z-index: 500;
+      width: min(360px, calc(100vw - 2.5rem)); height: min(520px, calc(100vh - 140px));
+      background: var(--white); border-radius: 18px; overflow: hidden;
+      box-shadow: 0 16px 48px rgba(13,43,62,0.28);
+      display: none; flex-direction: column; border: 1.5px solid rgba(38,181,175,0.15);
+    }
+    #chatPanel.open { display: flex; }
+    .chat-header {
+      background: var(--navy); color: #fff; padding: 1rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: 'Luckiest Guy', cursive; letter-spacing: 0.02em; font-size: 1rem;
+    }
+    .chat-header button { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 1.1rem; cursor: pointer; }
+    .chat-header button:hover { color: #fff; }
+    #chatMessages { flex: 1; overflow-y: auto; padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.6rem; background: var(--cream); }
+    .chat-msg { font-size: 0.875rem; line-height: 1.5; padding: 0.6rem 0.9rem; border-radius: 12px; max-width: 85%; }
+    .chat-msg.user { align-self: flex-end; background: var(--teal); color: #fff; border-bottom-right-radius: 4px; }
+    .chat-msg.bot { align-self: flex-start; background: #fff; color: var(--navy); border: 1px solid rgba(38,181,175,0.15); border-bottom-left-radius: 4px; }
+    .chat-msg.bot.error { color: var(--red-dark); }
+    .chat-msg.bot a { color: var(--teal); font-weight: 600; }
+    .chat-feedback { align-self: flex-start; display: flex; gap: 0.4rem; margin-top: -0.35rem; }
+    .chat-feedback button {
+      background: none; border: none; cursor: pointer; font-size: 0.85rem;
+      opacity: 0.45; padding: 0.1rem 0.3rem; line-height: 1; transition: opacity 0.15s;
+    }
+    .chat-feedback button:hover { opacity: 0.8; }
+    .chat-feedback button.voted { opacity: 1; }
+    .chat-feedback button:disabled { cursor: default; }
+    .chat-form { display: flex; gap: 0.5rem; padding: 0.75rem; border-top: 1.5px solid rgba(38,181,175,0.1); background: #fff; }
+    .chat-form input {
+      flex: 1; padding: 0.6rem 0.9rem; border: 2px solid rgba(38,181,175,0.15); border-radius: 100px;
+      font-family: 'Baloo 2', sans-serif; font-size: 0.875rem; color: var(--navy); background: var(--cream); outline: none;
+    }
+    .chat-form input:focus { border-color: var(--teal); }
+    .chat-form button {
+      background: var(--teal); color: #fff; border: none; border-radius: 100px; width: 40px; height: 40px;
+      cursor: pointer; font-size: 1rem; flex-shrink: 0; transition: background 0.2s;
+    }
+    .chat-form button:hover { background: var(--teal-dark); }
+    .chat-form button:disabled { opacity: 0.5; cursor: default; }
+    @media (max-width: 480px) {
+      #chatPanel { right: 12px; bottom: 88px; }
+      #chatToggle { right: 12px; bottom: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -473,7 +526,7 @@
         <div class="trust-item"><span class="dot" style="background:var(--yellow)"></span> ★ 4.7 on Amazon</div>
         <div class="trust-item"><span class="dot" style="background:var(--lime)"></span> 7,246 Orders Shipped</div>
         <div class="trust-item"><span class="dot" style="background:var(--teal)"></span> Ages 1–5</div>
-        <div class="trust-item"><span class="dot" style="background:var(--orange)"></span> 50–60 Pages Each</div>
+        <div class="trust-item"><span class="dot" style="background:var(--orange)"></span> 98–114 Pages Each</div>
       </div>
     </div>
 
@@ -487,9 +540,9 @@
         <span class="splash" style="width:35px;height:35px;background:var(--purple);opacity:0.3;top:20%;right:15px"></span>
       </div>
       <div class="book-fan">
-        <div class="fan-item"><img src="images/ABC1.png" alt="Dot Markers ABC Activity Book" /></div>
-        <div class="fan-item"><img src="images/Animals1.jpg" alt="Animals Vol 2" /></div>
-        <div class="fan-item"><img src="images/Shark-1.jpg" alt="Ocean Animals Vol 1" /></div>
+        <div class="fan-item"><img src="images/dot-markers-abc.png" alt="Dot Markers Activity Book — ABC Favorite Things" /></div>
+        <div class="fan-item"><img src="images/dot-markers-animals-vol-2.jpg" alt="Dot Markers Activity Book — Animals" /></div>
+        <div class="fan-item"><img src="images/dot-markers-animals.jpg" alt="Dot Markers Activity Book — Ocean Animals" /></div>
       </div>
       <div class="hero-badge badge-top badge-proof">
         <span class="badge-proof-star">★</span>
@@ -510,8 +563,8 @@
   </div>
   <div class="label-ticker" aria-hidden="true">
     <div class="label-ticker-track">
-      <span class="label-item"><span class="dot"></span>Dot Markers</span><span class="label-item"><span class="dot"></span>Ocean Animals</span><span class="label-item"><span class="dot"></span>Jungle Friends</span><span class="label-item"><span class="dot"></span>ABC Learning</span><span class="label-item"><span class="dot"></span>Ages 1–5</span><span class="label-item"><span class="dot"></span>Screen-Free Fun</span><span class="label-item"><span class="dot"></span>50–60 Pages</span><span class="label-item"><span class="dot"></span>Available on Amazon</span>
-      <span class="label-item"><span class="dot"></span>Dot Markers</span><span class="label-item"><span class="dot"></span>Ocean Animals</span><span class="label-item"><span class="dot"></span>Jungle Friends</span><span class="label-item"><span class="dot"></span>ABC Learning</span><span class="label-item"><span class="dot"></span>Ages 1–5</span><span class="label-item"><span class="dot"></span>Screen-Free Fun</span><span class="label-item"><span class="dot"></span>50–60 Pages</span><span class="label-item"><span class="dot"></span>Available on Amazon</span>
+      <span class="label-item"><span class="dot"></span>Dot Markers</span><span class="label-item"><span class="dot"></span>Ocean Animals</span><span class="label-item"><span class="dot"></span>Jungle Friends</span><span class="label-item"><span class="dot"></span>ABC Learning</span><span class="label-item"><span class="dot"></span>Ages 1–5</span><span class="label-item"><span class="dot"></span>Screen-Free Fun</span><span class="label-item"><span class="dot"></span>98–114 Pages</span><span class="label-item"><span class="dot"></span>Available on Amazon</span>
+      <span class="label-item"><span class="dot"></span>Dot Markers</span><span class="label-item"><span class="dot"></span>Ocean Animals</span><span class="label-item"><span class="dot"></span>Jungle Friends</span><span class="label-item"><span class="dot"></span>ABC Learning</span><span class="label-item"><span class="dot"></span>Ages 1–5</span><span class="label-item"><span class="dot"></span>Screen-Free Fun</span><span class="label-item"><span class="dot"></span>98–114 Pages</span><span class="label-item"><span class="dot"></span>Available on Amazon</span>
     </div>
   </div>
 
@@ -564,17 +617,16 @@
 
         <article class="book-card reveal">
           <div class="book-img-wrap">
-            <img src="images/Animals1.jpg" alt="Dot Markers Activity Book — Animals Vol. 2" />
-            <span class="book-chip chip-lime">Vol. 2</span>
+            <img src="images/dot-markers-animals-vol-2.jpg" alt="Dot Markers Activity Book — Animals" />
           </div>
           <div class="book-body">
             <div class="book-series s-lime">Jungle Animals Series</div>
-            <h3 class="book-title">Dot Markers — Animals Vol. 2</h3>
+            <h3 class="book-title">Dot Markers Activity Book — Animals</h3>
             <div class="book-rating">★★★★★ <span style="color:var(--navy2);opacity:.6;font-size:.75rem;font-weight:700">4.7 · 92 reviews</span></div>
             <p class="book-desc">Sloths, lions, monkeys & more! The jungle sequel kids keep asking for — more animals, more fun.</p>
-            <div class="book-meta"><span>50+ pages</span><span>•</span><span>Ages 2+</span><span>•</span><span>Paperback</span></div>
+            <div class="book-meta"><span>108 pages</span><span>•</span><span>Ages 2+</span><span>•</span><span>Paperback</span></div>
             <div class="book-cta">
-              <a href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0GS98FJ4S" target="_blank" rel="noopener noreferrer" class="cta-lime" onclick="doStamp(this)">Buy on Amazon →</a>
+              <a href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0D83CZ2GT" target="_blank" rel="noopener noreferrer" class="cta-lime" onclick="doStamp(this)">Buy on Amazon →</a>
               <a href="https://www.etsy.com/listing/4530506313/animal-dot-marker-activity-book-50" target="_blank" rel="noopener noreferrer" class="cta-etsy" onclick="doStamp(this)">Buy on Etsy →</a>
             </div>
           </div>
@@ -582,15 +634,14 @@
 
         <article class="book-card reveal reveal-delay-1">
           <div class="book-img-wrap">
-            <img src="images/Shark-1.jpg" alt="Dot Markers Activity Book — Ocean Animals" />
-            <span class="book-chip chip-teal">Vol. 1</span>
+            <img src="images/dot-markers-animals.jpg" alt="Dot Markers Activity Book — Ocean Animals" />
           </div>
           <div class="book-body">
             <div class="book-series s-teal">Ocean Animals Series</div>
-            <h3 class="book-title">Dot Markers — Animals</h3>
+            <h3 class="book-title">Dot Markers Activity Book — Ocean Animals</h3>
             <div class="book-rating">★★★★★ <span style="color:var(--navy2);opacity:.6;font-size:.75rem;font-weight:700">4.6 · 11 reviews</span></div>
             <p class="book-desc">Sharks, fish, octopus & more! Big dot patterns toddlers can fill with confidence on the very first try.</p>
-            <div class="book-meta"><span>50+ pages</span><span>•</span><span>Ages 2+</span><span>•</span><span>Paperback</span></div>
+            <div class="book-meta"><span>98 pages</span><span>•</span><span>Ages 2+</span><span>•</span><span>Paperback</span></div>
             <div class="book-cta">
               <a href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3" target="_blank" rel="noopener noreferrer" class="cta-teal" onclick="doStamp(this)">Buy on Amazon →</a>
             </div>
@@ -599,15 +650,15 @@
 
         <article class="book-card reveal reveal-delay-2">
           <div class="book-img-wrap">
-            <img src="images/ABC1.png" alt="Dot Markers ABC Activity Book" />
+            <img src="images/dot-markers-abc.png" alt="Dot Markers Activity Book — ABC Favorite Things" />
             <span class="book-chip chip-new">New!</span>
           </div>
           <div class="book-body">
             <div class="book-series s-forest">ABC Learning Series</div>
-            <h3 class="book-title">Dot Markers — ABC</h3>
+            <h3 class="book-title">Dot Markers Activity Book — ABC Favorite Things</h3>
             <div class="book-rating"><span style="color:var(--forest);font-size:.78rem;font-weight:800;letter-spacing:.04em">✦ Just Launched — Be the First to Review</span></div>
             <p class="book-desc">Big easy dots, alphabet fun! Learn A to Z through dot painting — every letter gets its own bold, colorful page.</p>
-            <div class="book-meta"><span>50+ pages</span><span>•</span><span>Ages 1–5</span><span>•</span><span>Paperback</span></div>
+            <div class="book-meta"><span>114 pages</span><span>•</span><span>Ages 1–5</span><span>•</span><span>Paperback</span></div>
             <div class="book-cta">
               <a href="https://www.amazon.com/dp/B0H7RPKQWG" target="_blank" rel="noopener noreferrer" class="cta-forest" onclick="doStamp(this)">Buy on Amazon →</a>
             </div>
@@ -797,7 +848,7 @@
 
         <div class="faq-item reveal reveal-delay-2">
           <div class="faq-q"><span class="dot" style="background:var(--purple)"></span> How many pages are in each book?</div>
-          <p class="faq-a">The Animals books have 50+ activity pages each. The ABC book has 60+ pages — one spread per letter, plus bonus pages. All are printed on quality paper stock.</p>
+          <p class="faq-a">The Ocean Animals book has 98 pages, and the Animals sequel has 108. The ABC Favorite Things book has 114 pages — one spread per letter, plus bonus pages. All are printed on quality paper stock.</p>
         </div>
 
         <div class="faq-item reveal reveal-delay-3">
@@ -880,9 +931,9 @@
 
     // CSV export
     var BOOKS = [
-      { title: 'Dot Markers Activity Book — Animals (Vol. 1)', series: 'Ocean Animals Series', ages: '2+', pages: '50+', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3' },
-      { title: 'Dot Markers Activity Book — Animals Vol. 2',   series: 'Jungle Animals Series', ages: '2+', pages: '50+', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0GS98FJ4S' },
-      { title: 'Dot Markers ABC Activity Book',                series: 'ABC Learning Series',   ages: '1-5', pages: '50+', url: 'https://www.amazon.com/dp/B0H7RPKQWG' }
+      { title: 'Dot Markers Activity Book — Ocean Animals',  series: 'Ocean Animals Series',  ages: '2+', pages: '98',  url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3' },
+      { title: 'Dot Markers Activity Book — Animals',        series: 'Jungle Animals Series', ages: '2+', pages: '108', url: 'https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0D83CZ2GT' },
+      { title: 'Dot Markers Activity Book — ABC Favorite Things', series: 'ABC Learning Series', ages: '1-5', pages: '114', url: 'https://www.amazon.com/dp/B0H7RPKQWG' }
     ];
     function exportBookList() {
       var csv = ['Title,Series,Ages,Pages,Amazon URL'].concat(BOOKS.map(function(b) {
@@ -967,6 +1018,227 @@
         }
       });
     });
+  </script>
+
+  <!-- ── Chat widget ─────────────────────────────────────────────── -->
+  <button id="chatToggle" aria-label="Open chat" aria-expanded="false">💬</button>
+  <div id="chatPanel" role="dialog" aria-label="Dot Marker Books chat">
+    <div class="chat-header">
+      <span>Ask about our books</span>
+      <button id="chatClose" aria-label="Close chat">✕</button>
+    </div>
+    <div id="chatMessages"></div>
+    <form class="chat-form" id="chatForm">
+      <input id="chatInput" type="text" placeholder="Ask a question…" maxlength="500" autocomplete="off" required />
+      <button type="submit" id="chatSend" aria-label="Send">→</button>
+    </form>
+  </div>
+
+  <script>
+    (function () {
+      var messagesEl = document.getElementById('chatMessages');
+      var formEl = document.getElementById('chatForm');
+      var inputEl = document.getElementById('chatInput');
+      var sendBtn = document.getElementById('chatSend');
+      var toggleBtn = document.getElementById('chatToggle');
+      var panelEl = document.getElementById('chatPanel');
+      var closeBtn = document.getElementById('chatClose');
+      var history = [];
+      var greeted = false;
+      // One id per page load, shared by every event fired during this chat
+      // session, so PostHog can group "how many follow-ups / helpful votes
+      // per conversation" rather than just per-message.
+      var conversationId = 'chat_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+
+      function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Bot replies are rendered as HTML (not textContent) so purchase
+      // links the model mentions are actually clickable — text is
+      // HTML-escaped first, then only recognized URL substrings are
+      // turned into <a> tags, so this stays safe against any HTML the
+      // model itself might emit.
+      function linkify(text) {
+        var escaped = escapeHtml(text);
+        return escaped.replace(/(https?:\/\/[^\s<]+)/g, function (url) {
+          // The regex above is greedy about what counts as "URL", so a
+          // sentence-ending period/comma/etc. right after the link gets
+          // swallowed into the href otherwise (seen in practice: a real
+          // reply ending "...dp/B0H7RPKQWG." linkified the trailing
+          // period into the URL). Strip trailing punctuation back out.
+          var trailing = '';
+          var match = /[.,;:!?)\]}'"]+$/.exec(url);
+          if (match) {
+            trailing = match[0];
+            url = url.slice(0, url.length - trailing.length);
+          }
+          // escapeHtml above only covers &/</> (per the HTML fragment
+          // serialization spec, text-node escaping never touches quotes —
+          // verified: div.textContent = '"'; div.innerHTML is a literal
+          // unescaped '"'). The url text itself is safe to display as-is
+          // at this point, but it's about to go inside a double-quoted
+          // href="..." attribute via string concatenation, so a literal
+          // '"' here would break out of the attribute — escape it
+          // specifically for that context.
+          var hrefValue = url.replace(/"/g, '&quot;');
+          return '<a href="' + hrefValue + '" target="_blank" rel="noopener noreferrer">' + url + '</a>' + trailing;
+        });
+      }
+
+      function addMessage(text, role, opts) {
+        opts = opts || {};
+        var div = document.createElement('div');
+        div.className = 'chat-msg ' + role + (opts.isError ? ' error' : '');
+        if (opts.linkify) {
+          div.innerHTML = linkify(text);
+        } else {
+          div.textContent = text;
+        }
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return div;
+      }
+
+      // Thumbs up/down under a successful bot reply. Not shown for the
+      // greeting, error messages, or the "…" placeholder — only for real
+      // answers, since those are what "was this helpful" actually grades.
+      function addFeedbackButtons(question, reply, turnIndex) {
+        var div = document.createElement('div');
+        div.className = 'chat-feedback';
+        var up = document.createElement('button');
+        up.type = 'button';
+        up.setAttribute('aria-label', 'Helpful');
+        up.textContent = '👍';
+        var down = document.createElement('button');
+        down.type = 'button';
+        down.setAttribute('aria-label', 'Not helpful');
+        down.textContent = '👎';
+
+        function vote(helpful) {
+          up.disabled = true;
+          down.disabled = true;
+          (helpful ? up : down).classList.add('voted');
+          if (window.posthog) {
+            posthog.capture('chat_reply_feedback', {
+              conversation_id: conversationId,
+              turn_index: turnIndex,
+              helpful: helpful,
+              question: question,
+              reply: reply,
+            });
+          }
+        }
+
+        up.addEventListener('click', function () { vote(true); });
+        down.addEventListener('click', function () { vote(false); });
+        div.appendChild(up);
+        div.appendChild(down);
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      // Event delegation, not a per-message listener: bot messages are
+      // re-rendered on every reply, and this survives that without needing
+      // cleanup. Only bot-message links count as the chatbot actually
+      // driving a click, not any other link that happens to be on the page.
+      messagesEl.addEventListener('click', function (e) {
+        var link = e.target.closest ? e.target.closest('a') : null;
+        if (!link || !messagesEl.contains(link)) return;
+        if (window.posthog) {
+          posthog.capture('chat_link_clicked', {
+            conversation_id: conversationId,
+            url: link.href,
+          });
+        }
+      });
+
+      function openPanel() {
+        panelEl.classList.add('open');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        if (!greeted) {
+          addMessage("Hi! I'm here to help with questions about our dot marker books — ages, pages, bulk orders, and more. What would you like to know?", 'bot');
+          greeted = true;
+        }
+        inputEl.focus();
+        if (window.posthog) posthog.capture('chat_opened', { conversation_id: conversationId });
+      }
+
+      function closePanel() {
+        panelEl.classList.remove('open');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      toggleBtn.addEventListener('click', function () {
+        panelEl.classList.contains('open') ? closePanel() : openPanel();
+      });
+      closeBtn.addEventListener('click', closePanel);
+
+      formEl.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var text = inputEl.value.trim();
+        if (!text) return;
+
+        // Computed before history is mutated below, so it reflects which
+        // turn THIS message is (1 = first message, 2+ = a follow-up) —
+        // each turn adds 2 entries (user + assistant) to history.
+        var turnIndex = Math.floor(history.length / 2) + 1;
+
+        addMessage(text, 'user');
+        inputEl.value = '';
+        inputEl.disabled = true;
+        sendBtn.disabled = true;
+        var thinking = addMessage('…', 'bot');
+
+        fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, history: history }),
+        })
+          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; }); })
+          .then(function (result) {
+            thinking.remove();
+            var succeeded = result.ok && !!result.data.reply;
+            if (succeeded) {
+              addMessage(result.data.reply, 'bot', { linkify: true });
+              addFeedbackButtons(text, result.data.reply, turnIndex);
+              history.push({ role: 'user', text: text });
+              history.push({ role: 'assistant', text: result.data.reply });
+            } else if (result.status === 429) {
+              addMessage("You're sending messages a bit fast — please wait a moment and try again.", 'bot', { isError: true });
+            } else {
+              addMessage("Sorry, I couldn't get an answer just now. Please try again or use the contact form below.", 'bot', { isError: true });
+            }
+            if (window.posthog) {
+              posthog.capture('chat_message_sent', {
+                conversation_id: conversationId,
+                turn_index: turnIndex,
+                is_followup: turnIndex > 1,
+                ok: succeeded,
+              });
+            }
+          })
+          .catch(function () {
+            thinking.remove();
+            addMessage("Sorry, something went wrong. Please try again or use the contact form below.", 'bot', { isError: true });
+            if (window.posthog) {
+              posthog.capture('chat_message_sent', {
+                conversation_id: conversationId,
+                turn_index: turnIndex,
+                is_followup: turnIndex > 1,
+                ok: false,
+              });
+            }
+          })
+          .finally(function () {
+            inputEl.disabled = false;
+            sendBtn.disabled = false;
+            inputEl.focus();
+          });
+      });
+    })();
   </script>
 
   <!-- Vercel Web Analytics -->
