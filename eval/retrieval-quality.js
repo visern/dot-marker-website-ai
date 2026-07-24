@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Evaluates retrieval on its own — separate from eval/langsmith-eval.js,
 // which grades the full pipeline's final reply. This isolates whether
-// embedQuery + retrieveContext (api/chat.js) actually pull the right
+// embedQuery + retrieveContext (lib/retrieval.js) actually pull the right
 // knowledge/ chunk for a question, independent of how well Groq/Gemini
 // writes from whatever context they're given.
 //
@@ -12,10 +12,10 @@
 //
 // Requires:
 //   LANGSMITH_API_KEY - from https://smith.langchain.com/settings
-//   GEMINI_API_KEY     - reused as the embedding model, same as api/chat.js
+//   GEMINI_API_KEY     - reused as the embedding model, same as lib/retrieval.js
 const { Client } = require('langsmith');
 const { evaluate } = require('langsmith/evaluation');
-const chat = require('../api/chat.js');
+const retrieval = require('../lib/retrieval.js');
 
 const DATASET_NAME = 'dot-marker-books-retrieval-quality';
 
@@ -62,9 +62,9 @@ async function ensureDatasetSeeded(client) {
 // Runs only retrieval — no generation call, so no Groq/Gemini chat quota
 // spent, just one Gemini embedding call per question.
 async function target(input) {
-  const records = chat.loadRecords();
-  const queryEmbedding = await chat.embedQuery(input.question);
-  const context = chat.retrieveContext(queryEmbedding, records);
+  const records = retrieval.loadRecords();
+  const queryEmbedding = await retrieval.embedQuery(input.question);
+  const context = retrieval.retrieveContext(queryEmbedding, records);
   return {
     retrievedChunkIds: context.map((c) => c.id),
     retrievedScores: context.map((c) => Number(c.score.toFixed(3))),
@@ -108,7 +108,7 @@ async function main() {
     process.exit(1);
   }
   if (!process.env.GEMINI_API_KEY) {
-    console.error('Missing GEMINI_API_KEY environment variable (used for embeddings, same as api/chat.js).');
+    console.error('Missing GEMINI_API_KEY environment variable (used for embeddings, same as lib/retrieval.js).');
     process.exit(1);
   }
 

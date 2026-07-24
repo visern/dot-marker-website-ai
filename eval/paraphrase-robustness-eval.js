@@ -18,10 +18,10 @@
 //
 // Requires:
 //   LANGSMITH_API_KEY - from https://smith.langchain.com/settings
-//   GEMINI_API_KEY     - reused as the embedding model, same as api/chat.js
+//   GEMINI_API_KEY     - reused as the embedding model, same as lib/retrieval.js
 const { Client } = require('langsmith');
 const { evaluate } = require('langsmith/evaluation');
-const chat = require('../api/chat.js');
+const retrieval = require('../lib/retrieval.js');
 
 const DATASET_NAME = 'dot-marker-books-paraphrase-robustness';
 
@@ -111,9 +111,9 @@ async function ensureDatasetSeeded(client) {
 }
 
 async function target(input) {
-  const records = chat.loadRecords();
-  const queryEmbedding = await chat.embedQuery(input.question);
-  const context = chat.retrieveContext(queryEmbedding, records);
+  const records = retrieval.loadRecords();
+  const queryEmbedding = await retrieval.embedQuery(input.question);
+  const context = retrieval.retrieveContext(queryEmbedding, records);
   return { retrievedChunkIds: context.map((c) => c.id) };
 }
 
@@ -149,7 +149,7 @@ async function main() {
     process.exit(1);
   }
   if (!process.env.GEMINI_API_KEY) {
-    console.error('Missing GEMINI_API_KEY environment variable (used for embeddings, same as api/chat.js).');
+    console.error('Missing GEMINI_API_KEY environment variable (used for embeddings, same as lib/retrieval.js).');
     process.exit(1);
   }
 
