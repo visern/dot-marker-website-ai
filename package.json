@@ -10,7 +10,8 @@
     "eval:retrieval": "node eval/retrieval-quality.js",
     "eval:multiturn": "node eval/multi-turn-eval.js",
     "eval:fallback": "node eval/fallback-reliability-eval.js",
-    "eval:paraphrase": "node eval/paraphrase-robustness-eval.js"
+    "eval:paraphrase": "node eval/paraphrase-robustness-eval.js",
+    "eval:faithfulness": "node eval/faithfulness-eval.js"
   },
   "engines": {
     "node": "24.x"

@@ -39,6 +39,7 @@ There's no unit test framework (no Jest/Playwright) and no configured linter (no
   - `npm run eval:multiturn` — multi-turn history threading.
   - `npm run eval:fallback` — Groq → Gemini fallback under a real forced failure.
   - `npm run eval:paraphrase` — retrieval robustness to rephrasing.
+  - `npm run eval:faithfulness` — does the reply only state facts grounded in the Product Database/Context it actually received, independent of whether that reply is the ideal answer (Groq-judged; runs the real pipeline in-process via `lib/`, no local server needed).
 - For frontend/DOM changes (especially anything touching `innerHTML` or attribute construction), verify the actual rendered/parsed output — via a real browser, or a throwaway `jsdom` check — rather than reasoning from what the code "should" do. This caught a real XSS gap once already (see git log).
 - New required env vars must be reflected in `.env.example` and `README.md` in the same change, not left implicit.
 
