@@ -17,6 +17,49 @@ knowledge/
 └── site/*.md         about/FAQ/contact/reviews/etc. — embedded
 ```
 
+**Build time** (runs on every Vercel deploy — `scripts/ingest.js`): facts are
+copied straight through untouched; only the narrative files are turned into
+vectors.
+
+```mermaid
+flowchart LR
+    P1["knowledge/products.json"] -->|"copied verbatim,<br/>never embedded"| D1["data/products.json"]
+    P2["knowledge/books/*.md<br/>(3 files)"] --> S["scripts/ingest.js"]
+    P3["knowledge/site/*.md<br/>(7 files)"] --> S
+    S -->|"embed each file<br/>Groq nomic-embed-text-v1_5"| D2["data/embeddings.json<br/>(10 vectors)"]
+    D1 -.->|"bundled into<br/>deployed function"| API["api/chat.js"]
+    D2 -.->|"bundled into<br/>deployed function"| API
+```
+
+**Request time** (`api/chat.js`, on every chat message): a cache check can
+skip the whole pipeline; a similarity floor can make retrieval return
+nothing rather than padding in an irrelevant chunk; generation falls back
+to a second provider only after retries are exhausted.
+
+```mermaid
+flowchart TD
+    A["Visitor asks a question"] --> B["POST /api/chat"]
+    B --> C{"Rate limit OK?<br/>(Redis sliding window)"}
+    C -->|"no"| C1["429 — slow down"]
+    C -->|"yes / Redis<br/>not configured"| D{"First message?<br/>check Redis cache"}
+    D -->|"cache hit"| D1["Return cached reply<br/>(0 API calls)"]
+    D -->|"cache miss or<br/>follow-up"| E["Embed question<br/>(Groq nomic-embed)"]
+    E --> F["Cosine similarity vs<br/>10 stored chunk vectors"]
+    F --> G{"score >= 0.3?"}
+    G -->|"none pass"| H["Context = empty"]
+    G -->|"yes"| H2["Top 3 chunks<br/>as Context"]
+    H --> I["Prompt = Product DB<br/>+ Context + Question"]
+    H2 --> I
+    I --> J["Generate: Groq<br/>llama-3.3-70b-versatile"]
+    J -->|"503/429,<br/>retries exhausted"| K["Fallback: Gemini<br/>gemini-3.5-flash"]
+    J -->|"success"| L["Reply"]
+    K --> L
+    L --> M{"Was this the<br/>first message?"}
+    M -->|"yes"| N["Cache reply in Redis<br/>(1 hour TTL)"]
+    M -->|"no"| O["Return to visitor"]
+    N --> O
+```
+
 - **`knowledge/products.json`** — the product database. Questions like "how
   many pages" or "where's the Amazon link" are answered straight from this
   JSON, never guessed by the model. There are only 3 products, so the whole
