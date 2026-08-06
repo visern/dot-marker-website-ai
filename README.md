@@ -26,36 +26,37 @@ flowchart LR
     P1["knowledge/products.json"] -->|"copied verbatim,<br/>never embedded"| D1["data/products.json"]
     P2["knowledge/books/*.md<br/>(3 files)"] --> S["scripts/ingest.js"]
     P3["knowledge/site/*.md<br/>(7 files)"] --> S
-    S -->|"embed each file<br/>Groq nomic-embed-text-v1_5"| D2["data/embeddings.json<br/>(10 vectors)"]
+    S -->|"embed each file<br/>Gemini gemini-embedding-001"| D2["data/embeddings.json<br/>(10 vectors)"]
     D1 -.->|"bundled into<br/>deployed function"| API["api/chat.js"]
     D2 -.->|"bundled into<br/>deployed function"| API
 ```
 
-**Request time** (`api/chat.js`, on every chat message): a cache check can
-skip the whole pipeline; a similarity floor can make retrieval return
-nothing rather than padding in an irrelevant chunk; generation falls back
-to a second provider only after retries are exhausted.
+**Request time** (`api/chat.js` orchestrating the `lib/` modules, on every
+chat message): a cache check can skip the whole pipeline; a similarity
+floor can make retrieval return nothing rather than padding in an
+irrelevant chunk; generation falls back to a second provider only after
+retries are exhausted.
 
 ```mermaid
 flowchart TD
     A["Visitor asks a question"] --> B["POST /api/chat"]
-    B --> C{"Rate limit OK?<br/>(Redis sliding window)"}
+    B --> C{"Rate limit OK?<br/>(lib/rateLimit.js, Redis)"}
     C -->|"no"| C1["429 — slow down"]
-    C -->|"yes / Redis<br/>not configured"| D{"First message?<br/>check Redis cache"}
+    C -->|"yes / Redis<br/>not configured"| D{"First message?<br/>check cache<br/>(lib/cache.js)"}
     D -->|"cache hit"| D1["Return cached reply<br/>(0 API calls)"]
-    D -->|"cache miss or<br/>follow-up"| E["Embed question<br/>(Groq nomic-embed)"]
+    D -->|"cache miss or<br/>follow-up"| E["Embed question<br/>(lib/retrieval.js,<br/>Gemini gemini-embedding-001)"]
     E --> F["Cosine similarity vs<br/>10 stored chunk vectors"]
-    F --> G{"score >= 0.3?"}
+    F --> G{"score >= 0.65?"}
     G -->|"none pass"| H["Context = empty"]
-    G -->|"yes"| H2["Top 3 chunks<br/>as Context"]
+    G -->|"yes"| H2["Top 4 chunks<br/>as Context"]
     H --> I["Prompt = Product DB<br/>+ Context + Question"]
     H2 --> I
-    I --> J["Generate: Groq<br/>llama-3.3-70b-versatile"]
+    I --> J["Generate: Groq<br/>llama-3.3-70b-versatile<br/>(lib/generate.js)"]
     J -->|"503/429,<br/>retries exhausted"| K["Fallback: Gemini<br/>gemini-3.5-flash"]
     J -->|"success"| L["Reply"]
     K --> L
     L --> M{"Was this the<br/>first message?"}
-    M -->|"yes"| N["Cache reply in Redis<br/>(1 hour TTL)"]
+    M -->|"yes"| N["Cache reply<br/>(lib/cache.js, 1 hour TTL)"]
     M -->|"no"| O["Return to visitor"]
     N --> O
 ```
@@ -89,8 +90,11 @@ flowchart TD
   narrow question can retrieve zero context chunks rather than padding the
   prompt with the closest-available-but-still-unrelated one — the model
   still gets the full Product Database either way. `MIN_SIMILARITY_SCORE`
-  is an untuned starting point (0.3), worth revisiting against real
-  questions once there's traffic to look at. `vercel.json` explicitly
+  (0.65) and `TOP_K` (4) were calibrated against `eval/retrieval-quality.js`'s
+  12 test questions — on-topic questions' best-matching chunk scored
+  0.69-0.79, off-topic scored 0.50-0.61, so 0.65 sits in that gap with
+  margin both ways; re-run that eval if retrieval quality is ever in
+  question. `vercel.json` explicitly
   bundles `data/**` into this function via `functions.includeFiles`, since
   the file path is built at runtime and Vercel's automatic bundler can't
   always detect it. Generation retries a couple of times on transient
@@ -105,13 +109,15 @@ flowchart TD
 - **Reply cache**: the first message of a conversation is cached in Redis for
   1 hour, keyed by the normalized question text (case/whitespace-insensitive
   exact match, not semantic). A repeated FAQ-style question ("how many
-  pages", "what ages") skips both Groq calls entirely and returns instantly.
+  pages", "what ages") skips both the Gemini embedding call and the Groq
+  generation call entirely, returning instantly.
   Follow-up messages (anything with prior conversation history) always skip
   the cache, since their correct answer depends on what was said earlier,
   not just the latest message on its own. This matters because Groq's free
   tier caps out at 1,000 requests/day and every uncached message costs one
-  of them (generation only — embedding is a separate Gemini call and quota)
-  — same fail-open behavior as rate limiting if Redis isn't configured.
+  Groq generation call plus a separate Gemini embedding call (different
+  provider, different quota) — same fail-open behavior as rate limiting if
+  Redis isn't configured.
 - The chat widget (bottom-right bubble) is inlined in `index.html` and calls `/api/chat`.
 - Per-IP rate limiting: `/api/chat` caps each IP to 10 messages/minute using a sliding-window
   counter in Redis (see below). This is a crude backstop against scripted abuse of the free
