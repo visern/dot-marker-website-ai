@@ -66,6 +66,67 @@ flowchart TD
     N --> O
 ```
 
+Same request, viewed as an ordered call sequence across actors instead of
+a decision tree — useful for seeing *when* each external call happens
+relative to the others, and that the PostHog analytics events are fired
+independently by the frontend rather than being part of the request/reply
+cycle at all:
+
+```mermaid
+sequenceDiagram
+    actor Visitor
+    participant Frontend as Static Frontend<br/>(index.html)
+    participant ChatAPI as Chat API<br/>(api/chat.js + lib/)
+    participant Redis as Upstash Redis
+    participant Gemini as Google Gemini
+    participant Groq as Groq
+    participant PostHog
+
+    Visitor->>Frontend: opens chat bubble
+    Frontend-->>PostHog: chat_opened (async)
+    Visitor->>Frontend: types question, hits send
+    Frontend-->>PostHog: chat_message_sent (async)
+    Frontend->>ChatAPI: POST /api/chat<br/>{message, history}
+
+    ChatAPI->>Redis: sliding-window rate limit check
+    Redis-->>ChatAPI: request count
+
+    alt over 10/min for this IP
+        ChatAPI-->>Frontend: 429 Too Many Requests
+    else within limit (or Redis unset — fails open)
+        opt first message of conversation
+            ChatAPI->>Redis: GET cached reply for this question
+            Redis-->>ChatAPI: cached reply, or none
+        end
+
+        alt cache hit
+            ChatAPI-->>Frontend: 200 { reply } (0 model calls)
+        else cache miss or a follow-up message
+            ChatAPI->>Gemini: embed the question<br/>(gemini-embedding-001)
+            Gemini-->>ChatAPI: query vector
+            Note over ChatAPI: cosine similarity vs 10 chunk<br/>vectors in data/embeddings.json<br/>(bundled file, no network call)
+
+            ChatAPI->>Groq: generate reply<br/>(llama-3.3-70b-versatile)
+            alt Groq succeeds
+                Groq-->>ChatAPI: reply
+            else Groq fails after its own retries
+                ChatAPI->>Gemini: generate reply (fallback)<br/>(gemini-3.5-flash)
+                Gemini-->>ChatAPI: reply
+            end
+
+            opt first message of conversation
+                ChatAPI->>Redis: SET cached reply (1 hour TTL)
+            end
+            ChatAPI-->>Frontend: 200 { reply }
+        end
+    end
+
+    Frontend-->>Visitor: renders reply
+    opt visitor clicks a link or reacts to the reply
+        Frontend-->>PostHog: chat_link_clicked /<br/>chat_reply_feedback (async)
+    end
+```
+
 - **`knowledge/products.json`** — the product database. Questions like "how
   many pages" or "where's the Amazon link" are answered straight from this
   JSON, never guessed by the model. There are only 3 products, so the whole
