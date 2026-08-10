@@ -5,6 +5,11 @@ widget that answers visitor questions using the site's own content.
 
 ## Architecture
 
+For the C4-style zoomed-out view (system context → containers → components
+inside the Chat API), see [`docs/c4-diagrams.md`](docs/c4-diagrams.md). The
+diagrams below are pipeline-focused instead — same system, viewed as data
+flow rather than deployable pieces.
+
 Facts and narrative are deliberately kept in separate systems, the way a
 real product catalog would be — not everything goes through embeddings:
 
