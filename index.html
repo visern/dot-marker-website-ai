@@ -118,7 +118,7 @@
     /* ── Hero ─────────────────────────────────────────────────── */
     #hero {
       min-height: 100vh;
-      display: grid; grid-template-columns: 1fr 1fr;
+      display: grid; grid-template-columns: 0.85fr 1.15fr;
       align-items: center; padding: 7rem 4rem 5rem; gap: 3rem;
       max-width: 1200px; margin: 0 auto;
     }
@@ -147,31 +147,42 @@
     .trust-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 700; color: var(--navy2); }
     .trust-item .dot { width: 7px; height: 7px; }
 
-    .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; height: 520px; }
+    .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; height: 660px; }
     .hero-circle {
-      position: absolute; width: 420px; height: 420px; border-radius: 50%;
+      position: absolute; width: 480px; height: 480px; border-radius: 50%;
       background: radial-gradient(circle at 40% 40%, rgba(38,181,175,0.18) 0%, rgba(77,156,56,0.12) 100%);
     }
     .hero-circle .splash { position: absolute; border-radius: 50%; }
 
-    /* Fixed circular arrangement — 3 covers evenly spaced 120° apart around
-       the hero circle. Was a continuously spinning orbit; replaced because
-       the spin passed through overlapping states that obscured a cover
-       mid-rotation, some of the time, for every visitor — a hero product
-       image should read clearly at a glance, not depend on when the
-       animation happened to land. */
-    .book-fan { position: relative; z-index: 1; width: 360px; height: 360px; }
+    /* Slow orbit, radius sized so bigger covers never overlap: items stay
+       upright while their position rotates, so the closest approach between
+       any two happens when the line between them lines up with their own
+       diagonal — safe only once radius clears diagonal / (2*sin(60deg)).
+       At 185x~246px covers that's ~178px minimum; 195px leaves real
+       clearance. Also sized to fit the hero's own 0.85/1.15 column split
+       (measured, not assumed — see the 1100px breakpoint below for why the
+       layout stacks instead of guessing this still fits at narrower
+       2-column widths). 24s / 3 items = 8s delay steps keep all three
+       exactly 120° apart throughout, so that clearance never closes. */
+    .book-fan { position: relative; z-index: 1; width: 480px; height: 480px; }
     .book-fan .fan-item {
-      position: absolute; width: 155px;
+      position: absolute; width: 185px;
+      left: calc(50% - 92px); top: calc(50% - 123px);
       border-radius: 8px; overflow: hidden;
       box-shadow: 0 8px 32px rgba(13,43,62,0.22), 0 2px 8px rgba(13,43,62,0.1);
-      cursor: pointer; transition: filter 0.2s, box-shadow 0.2s, transform 0.2s;
+      cursor: pointer; animation: bookOrbit 24s linear infinite;
     }
-    .book-fan .fan-item:nth-child(1) { left: 103px; top: -28px; }
-    .book-fan .fan-item:nth-child(2) { left: 193px; top: 130px; }
-    .book-fan .fan-item:nth-child(3) { left: 12px;  top: 130px; }
+    .book-fan .fan-item:nth-child(1) { animation-delay:   0s; }
+    .book-fan .fan-item:nth-child(2) { animation-delay:  -8s; }
+    .book-fan .fan-item:nth-child(3) { animation-delay: -16s; }
+    @keyframes bookOrbit {
+      from { transform: rotate(0deg)   translateX(195px) rotate(0deg); }
+      to   { transform: rotate(360deg) translateX(195px) rotate(-360deg); }
+    }
+    .book-fan .fan-item a { display: block; }
     .book-fan .fan-item img { width: 100%; display: block; }
-    .book-fan .fan-item:hover { filter: brightness(1.06); box-shadow: 0 16px 48px rgba(13,43,62,0.28); transform: translateY(-4px); }
+    .book-fan:hover .fan-item { animation-play-state: paused; }
+    .book-fan .fan-item:hover { filter: brightness(1.06); box-shadow: 0 16px 48px rgba(13,43,62,0.28); }
 
     .hero-badge {
       position: absolute; background: #fff; border-radius: 100px;
@@ -391,18 +402,32 @@
     .reveal-delay-3 { transition-delay: 0.3s; }
 
     /* ── Responsive ───────────────────────────────────────────── */
+    /* Stacks the hero before the 2-column grid gets narrow enough for the
+       orbiting circle to reach the text column — measured directly (via a
+       real browser, not assumed): at the 512px-equal-column layout this
+       replaced, the orbit's own box already had only ~18px of clearance
+       from the text column at a wide 1440px viewport, and column width
+       only shrinks further below the 1200px grid cap. Stacking here means
+       the circle gets the full viewport width to itself instead, so no
+       special reduced sizing is needed for this range — it reuses the
+       same (already fits) desktop dimensions. */
+    @media (max-width: 1100px) {
+      #hero { grid-template-columns: 1fr; text-align: center; padding: 7rem 2rem 4rem; }
+      .hero-sub, .hero-trust { margin: 0 auto 1.5rem; }
+      .hero-btns { justify-content: center; }
+      .hero-trust { justify-content: center; }
+    }
+
     @media (max-width: 900px) {
       #hero { grid-template-columns: 1fr; text-align: center; padding: 7rem 2rem 4rem; }
       .hero-sub, .hero-trust { margin: 0 auto 1.5rem; }
       .hero-btns { justify-content: center; }
       .hero-trust { justify-content: center; }
-      .hero-visual { height: 340px; }
-      .hero-circle { width: 300px; height: 300px; }
-      .book-fan { width: 260px; height: 260px; }
-      .book-fan .fan-item { width: 115px; }
-      .book-fan .fan-item:nth-child(1) { left: 73px;  top: -24px; }
-      .book-fan .fan-item:nth-child(2) { left: 140px; top: 93px; }
-      .book-fan .fan-item:nth-child(3) { left: 5px;   top: 93px; }
+      .hero-visual { height: 460px; }
+      .hero-circle { width: 360px; height: 360px; }
+      .book-fan { width: 340px; height: 340px; }
+      .book-fan .fan-item { width: 130px; left: calc(50% - 65px); top: calc(50% - 87px); }
+      @keyframes bookOrbit { from { transform: rotate(0deg) translateX(135px) rotate(0deg); } to { transform: rotate(360deg) translateX(135px) rotate(-360deg); } }
       .badge-top    { top:10px; right:-10px; }
       .badge-bottom { bottom:20px; left:-10px; }
       .books-grid { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto 2.5rem; }
@@ -541,9 +566,9 @@
         <span class="splash" style="width:35px;height:35px;background:var(--purple);opacity:0.3;top:20%;right:15px"></span>
       </div>
       <div class="book-fan">
-        <div class="fan-item"><img src="images/dot-markers-abc.png" alt="Dot Markers Activity Book — ABC Favorite Things" /></div>
-        <div class="fan-item"><img src="images/dot-markers-animals-vol-2.jpg" alt="Dot Markers Activity Book — Animals" /></div>
-        <div class="fan-item"><img src="images/dot-markers-animals.jpg" alt="Dot Markers Activity Book — Ocean Animals" /></div>
+        <div class="fan-item"><a href="https://www.amazon.com/dp/B0H7RPKQWG" target="_blank" rel="noopener noreferrer" onclick="doStamp(this)"><img src="images/dot-markers-abc.png" alt="Dot Markers Activity Book — ABC Favorite Things" /></a></div>
+        <div class="fan-item"><a href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0D83CZ2GT" target="_blank" rel="noopener noreferrer" onclick="doStamp(this)"><img src="images/dot-markers-animals-vol-2.jpg" alt="Dot Markers Activity Book — Animals" /></a></div>
+        <div class="fan-item"><a href="https://www.amazon.com/Dot-Markers-Activity-Book-Animals/dp/B0F2NCZMH3" target="_blank" rel="noopener noreferrer" onclick="doStamp(this)"><img src="images/dot-markers-animals.jpg" alt="Dot Markers Activity Book — Ocean Animals" /></a></div>
       </div>
       <div class="hero-badge badge-top badge-proof">
         <span class="badge-proof-star">★</span>
