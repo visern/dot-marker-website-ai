@@ -1,0 +1,263 @@
+# Dot Marker Books — Website + RAG Chat
+
+Static site (`index.html`) deployed on Vercel, plus a retrieval-augmented chat
+widget that answers visitor questions using the site's own content.
+
+## Architecture
+
+For the C4-style zoomed-out view (system context → containers → components
+inside the Chat API), see [`docs/c4-diagrams.md`](docs/c4-diagrams.md). The
+diagrams below are pipeline-focused instead — same system, viewed as data
+flow rather than deployable pieces.
+
+Facts and narrative are deliberately kept in separate systems, the way a
+real product catalog would be — not everything goes through embeddings:
+
+```
+knowledge/
+├── products.json     facts (ages, pages, links, ratings) — NEVER embedded,
+│                     read verbatim and handed to the model on every request
+├── books/*.md        marketing narrative + full contents list per book —
+│                     embedded (semantic search)
+└── site/*.md         about/FAQ/contact/reviews/etc. — embedded
+```
+
+**Build time** (runs on every Vercel deploy — `scripts/ingest.js`): facts are
+copied straight through untouched; only the narrative files are turned into
+vectors.
+
+```mermaid
+flowchart LR
+    P1["knowledge/products.json"] -->|"copied verbatim,<br/>never embedded"| D1["data/products.json"]
+    P2["knowledge/books/*.md<br/>(3 files)"] --> S["scripts/ingest.js"]
+    P3["knowledge/site/*.md<br/>(7 files)"] --> S
+    S -->|"embed each file<br/>Gemini gemini-embedding-001"| D2["data/embeddings.json<br/>(10 vectors)"]
+    D1 -.->|"bundled into<br/>deployed function"| API["api/chat.js"]
+    D2 -.->|"bundled into<br/>deployed function"| API
+```
+
+**Request time** (`api/chat.js` orchestrating the `lib/` modules, on every
+chat message): a cache check can skip the whole pipeline; a similarity
+floor can make retrieval return nothing rather than padding in an
+irrelevant chunk; generation falls back to a second provider only after
+retries are exhausted.
+
+```mermaid
+flowchart TD
+    A["Visitor asks a question"] --> B["POST /api/chat"]
+    B --> C{"Rate limit OK?<br/>(lib/rateLimit.js, Redis)"}
+    C -->|"no"| C1["429 — slow down"]
+    C -->|"yes / Redis<br/>not configured"| D{"First message?<br/>check cache<br/>(lib/cache.js)"}
+    D -->|"cache hit"| D1["Return cached reply<br/>(0 API calls)"]
+    D -->|"cache miss or<br/>follow-up"| E["Embed question<br/>(lib/retrieval.js,<br/>Gemini gemini-embedding-001)"]
+    E --> F["Cosine similarity vs<br/>10 stored chunk vectors"]
+    F --> G{"score >= 0.65?"}
+    G -->|"none pass"| H["Context = empty"]
+    G -->|"yes"| H2["Top 4 chunks<br/>as Context"]
+    H --> I["Prompt = Product DB<br/>+ Context + Question"]
+    H2 --> I
+    I --> J["Generate: Groq<br/>llama-3.3-70b-versatile<br/>(lib/generate.js)"]
+    J -->|"503/429,<br/>retries exhausted"| K["Fallback: Gemini<br/>gemini-3.5-flash"]
+    J -->|"success"| L["Reply"]
+    K --> L
+    L --> M{"Was this the<br/>first message?"}
+    M -->|"yes"| N["Cache reply<br/>(lib/cache.js, 1 hour TTL)"]
+    M -->|"no"| O["Return to visitor"]
+    N --> O
+```
+
+Same request, viewed as an ordered call sequence across actors instead of
+a decision tree — useful for seeing *when* each external call happens
+relative to the others, and that the PostHog analytics events are fired
+independently by the frontend rather than being part of the request/reply
+cycle at all:
+
+```mermaid
+sequenceDiagram
+    actor Visitor
+    participant Frontend as Static Frontend<br/>(index.html)
+    participant ChatAPI as Chat API<br/>(api/chat.js + lib/)
+    participant Redis as Upstash Redis
+    participant Gemini as Google Gemini
+    participant Groq as Groq
+    participant PostHog
+
+    Visitor->>Frontend: opens chat bubble
+    Frontend-->>PostHog: chat_opened (async)
+    Visitor->>Frontend: types question, hits send
+    Frontend-->>PostHog: chat_message_sent (async)
+    Frontend->>ChatAPI: POST /api/chat<br/>{message, history}
+
+    ChatAPI->>Redis: sliding-window rate limit check
+    Redis-->>ChatAPI: request count
+
+    alt over 10/min for this IP
+        ChatAPI-->>Frontend: 429 Too Many Requests
+    else within limit (or Redis unset — fails open)
+        opt first message of conversation
+            ChatAPI->>Redis: GET cached reply for this question
+            Redis-->>ChatAPI: cached reply, or none
+        end
+
+        alt cache hit
+            ChatAPI-->>Frontend: 200 { reply } (0 model calls)
+        else cache miss or a follow-up message
+            ChatAPI->>Gemini: embed the question<br/>(gemini-embedding-001)
+            Gemini-->>ChatAPI: query vector
+            Note over ChatAPI: cosine similarity vs 10 chunk<br/>vectors in data/embeddings.json<br/>(bundled file, no network call)
+
+            ChatAPI->>Groq: generate reply<br/>(llama-3.3-70b-versatile)
+            alt Groq succeeds
+                Groq-->>ChatAPI: reply
+            else Groq fails after its own retries
+                ChatAPI->>Gemini: generate reply (fallback)<br/>(gemini-3.5-flash)
+                Gemini-->>ChatAPI: reply
+            end
+
+            opt first message of conversation
+                ChatAPI->>Redis: SET cached reply (1 hour TTL)
+            end
+            ChatAPI-->>Frontend: 200 { reply }
+        end
+    end
+
+    Frontend-->>Visitor: renders reply
+    opt visitor clicks a link or reacts to the reply
+        Frontend-->>PostHog: chat_link_clicked /<br/>chat_reply_feedback (async)
+    end
+```
+
+- **`knowledge/products.json`** — the product database. Questions like "how
+  many pages" or "where's the Amazon link" are answered straight from this
+  JSON, never guessed by the model. There are only 3 products, so the whole
+  file is sent on every request rather than retrieved — no query router
+  needed at this scale. `scripts/ingest.js` copies it verbatim to
+  `data/products.json` (no embedding involved).
+- **`knowledge/books/*.md`, `knowledge/site/*.md`** — one embedded chunk per
+  file, used for "tell me about," "does this book have X," "which book
+  would you recommend," and general site questions (FAQ, about, contact,
+  etc.). Each book's `.md` includes its full contents list (every letter
+  for the ABC book, every animal for the two Animals books) pulled from the
+  real interior PDFs, so the chatbot can answer "does the book have a
+  llama" without needing the PDFs themselves in the repo or at build time —
+  10 total chunks, no page-level chunking, no OCR.
+- **`scripts/ingest.js`** — copies `products.json` and embeds the 10
+  markdown files, writing `data/products.json` + `data/embeddings.json`.
+  Runs automatically on every Vercel build (`vercel.json` → `buildCommand`);
+  neither output file is committed to git (see `.gitignore`) — they're
+  regenerated fresh each deploy.
+- **`api/chat.js`** — on each message: embeds the visitor's question with
+  Gemini (`gemini-embedding-001` — Groq has no embeddings API), finds the most relevant chunks from
+  `data/embeddings.json` (cosine similarity, keeping only chunks scoring at
+  least `MIN_SIMILARITY_SCORE`, capped at the top `TOP_K`), and sends Groq
+  (`llama-3.3-70b-versatile`) both the full Product Database and the
+  retrieved Context, with the system prompt explaining which one answers
+  which kind of question. The similarity floor means an off-topic or
+  narrow question can retrieve zero context chunks rather than padding the
+  prompt with the closest-available-but-still-unrelated one — the model
+  still gets the full Product Database either way. `MIN_SIMILARITY_SCORE`
+  (0.65) and `TOP_K` (4) were calibrated against `eval/retrieval-quality.js`'s
+  12 test questions — on-topic questions' best-matching chunk scored
+  0.69-0.79, off-topic scored 0.50-0.61, so 0.65 sits in that gap with
+  margin both ways; re-run that eval if retrieval quality is ever in
+  question. `vercel.json` explicitly
+  bundles `data/**` into this function via `functions.includeFiles`, since
+  the file path is built at runtime and Vercel's automatic bundler can't
+  always detect it. Generation retries a couple of times on transient
+  503/429s before erroring out.
+- **`GEMINI_API_KEY` is required, not optional**: retrieval always embeds
+  through Gemini (see above) regardless of which provider generates the
+  reply, so without it `/api/chat` returns a 500 on every request.
+- **Generation fallback**: if Groq generation is still failing after its own
+  retries (a sustained outage, not a blip), `api/chat.js` falls back to
+  Gemini (`gemini-3.5-flash`) for that reply instead of erroring out. This
+  reuses the same required `GEMINI_API_KEY`.
+- **Reply cache**: the first message of a conversation is cached in Redis for
+  1 hour, keyed by the normalized question text (case/whitespace-insensitive
+  exact match, not semantic). A repeated FAQ-style question ("how many
+  pages", "what ages") skips both the Gemini embedding call and the Groq
+  generation call entirely, returning instantly.
+  Follow-up messages (anything with prior conversation history) always skip
+  the cache, since their correct answer depends on what was said earlier,
+  not just the latest message on its own. This matters because Groq's free
+  tier caps out at 1,000 requests/day and every uncached message costs one
+  Groq generation call plus a separate Gemini embedding call (different
+  provider, different quota) — same fail-open behavior as rate limiting if
+  Redis isn't configured.
+- The chat widget (bottom-right bubble) is inlined in `index.html` and calls `/api/chat`.
+- Per-IP rate limiting: `/api/chat` caps each IP to 10 messages/minute using a sliding-window
+  counter in Redis (see below). This is a crude backstop against scripted abuse of the free
+  Groq quota, not a hard guarantee — if Redis isn't configured, rate limiting is skipped
+  and the endpoint still works (fails open).
+
+## One-time setup
+
+1. Get a free Groq API key: https://console.groq.com/keys
+2. Get a free Gemini API key: https://aistudio.google.com/apikey — **required**, not
+   optional: Groq has no embeddings API, so all retrieval (build-time ingestion and
+   every live query) goes through Gemini regardless of which provider generates the
+   reply. It also doubles as the generation fallback if Groq has a sustained outage.
+3. In the Vercel project settings, add both `GROQ_API_KEY` and `GEMINI_API_KEY` as
+   environment variables for **Production, Preview, and Development**.
+4. Recommended: add the **Upstash Redis** integration from the Vercel Marketplace
+   (free tier is plenty) so `/api/chat` has rate limiting and the reply cache. Vercel
+   wires up the `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` env vars
+   automatically — no code changes needed. A Vercel KV store works the same way.
+5. Deploy (or redeploy). The build runs `npm run ingest` automatically, producing
+   `data/embeddings.json` for that deployment.
+6. Test the chat bubble on the live site.
+
+For local development, copy `.env.example` to `.env`, fill in both keys, and run
+`npm run ingest` to generate a local `data/embeddings.json`.
+
+## Updating the knowledge base
+
+- **Edited a book card in `index.html`** (title, series, description, pages,
+  ages, rating, review count, Amazon/Etsy link)? Run `npm run sync-knowledge`
+  locally. It parses the book cards straight out of `index.html`, diffs them
+  against `knowledge/products.json`, and rewrites just the fields that
+  changed (matching cards to products by the ASIN in their Amazon URL, so it
+  survives title rewording). It also updates the matching
+  `knowledge/books/<id>.md` heading if the title changed. Review the printed
+  diff, then commit `knowledge/products.json` (and any `.md` heading change)
+  yourself — this only exists to catch drift between the visible site and
+  the chatbot's facts (this is exactly how a stale ASIN once ended up live on
+  the site). It's a local step, not part of the Vercel build: build-time
+  file writes never get committed back to git, so running it there would
+  just silently disappear on the next deploy. It only covers the fields that
+  actually appear in the book cards — see below for everything else.
+- **Marketing copy, a FAQ answer, or a book's contents list changed**? Edit
+  the relevant file under `knowledge/books/` or `knowledge/site/` by hand —
+  the long-form Amazon-style copy and "Full contents list" sections have no
+  source of truth in `index.html` (the card's description is one sentence,
+  not the full listing), so update those from the real interior file or
+  listing — don't guess.
+- **New book added**? Add a product entry to `products.json` and a new
+  `knowledge/books/<id>.md` file following the existing ones (`sync-knowledge`
+  will only warn about the unmatched card, not create these for you).
+
+In every case, just redeploy — ingestion re-runs automatically as part of
+the Vercel build. No manual embedding step or commit needed.
+
+## Evaluating chat quality
+
+`npm run eval` (`eval/langsmith-eval.js`) runs the chatbot's answers through
+[LangSmith](https://smith.langchain.com/) as a scored experiment: it seeds a
+small dataset of real questions (page counts, prices, "does it have X,"
+off-topic requests, an unreviewed book's rating), calls the live `/api/chat`
+endpoint for each one, and grades the replies with an LLM-as-judge evaluator
+(via Groq) against this project's actual correctness rules — the same rules
+in `api/chat.js`'s `SYSTEM_PROMPT` (never invent a fact, decline what you
+don't know, stay on topic). Full per-question scores and comments show up in
+the LangSmith UI.
+
+This is a local, manual dev tool — `langsmith` is a `devDependency` only, so
+the deployed site and function stay dependency-free. Requires
+`LANGSMITH_API_KEY` and `GROQ_API_KEY` (see `.env.example`); point
+`CHAT_ENDPOINT_URL` at a deployed URL instead of `localhost:3000` to
+evaluate a real deployment rather than a local dev server.
+
+`eval/deepeval-criteria.md` documents the same underlying rubric written for
+DeepEval (a Python framework) — kept as reference/rationale for *why* these
+specific rules matter, even though the runnable version ended up built on
+LangSmith instead.
