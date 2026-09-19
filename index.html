@@ -342,7 +342,7 @@
     .about-photo-placeholder { display: flex; flex-direction: column; align-items: center; gap: 14px; }
     .about-photo-placeholder .dots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
     .about-photo-placeholder .dots-grid .dot { width: 26px; height: 26px; }
-    .about-photo-placeholder p { font-size: 0.7rem; color: rgba(255,255,255,0.45); letter-spacing: 0.06em; }
+    .about-photo-placeholder .about-photo-initials { font-family: 'Luckiest Guy', cursive; font-size: 2.2rem; color: #fff; letter-spacing: 0.05em; margin: 0; opacity: 0.9; }
     .about-art .float-dot { position: absolute; border-radius: 50%; opacity: 0.12; }
     .about-text-side { padding: 5rem 4rem; display: flex; flex-direction: column; justify-content: center; gap: 1.25rem; }
     .about-tag { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--yellow); opacity: 0.85; }
@@ -809,7 +809,8 @@
         <span class="float-dot" style="width:90px;height:90px;background:#fff;bottom:20px;right:-10px"></span>
         <span class="float-dot" style="width:60px;height:60px;background:var(--yellow);top:45%;left:5%"></span>
         <div class="about-photo-frame">
-          <!-- Replace with: <img src="images/author-photo.jpg" alt="Author photo" /> -->
+          <!-- No author photo yet -- swap this whole placeholder for:
+               <img src="images/author-photo.jpg" alt="Veronica Daves" /> -->
           <div class="about-photo-placeholder">
             <div class="dots-grid">
               <span class="dot" style="background:var(--red);opacity:.7"></span>
@@ -821,7 +822,7 @@
               <span class="dot" style="background:var(--pink);opacity:.7"></span>
               <span class="dot" style="background:#fff;opacity:.5"></span>
             </div>
-            <p>author-photo.jpg</p>
+            <p class="about-photo-initials">VD</p>
           </div>
         </div>
       </div>
